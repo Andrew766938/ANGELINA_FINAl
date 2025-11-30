@@ -1,5 +1,7 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
 
+from app.schemes.roles import SRoleGet
+
 
 class SUserAddRequest(BaseModel):
     name: str
@@ -22,3 +24,14 @@ class SUserAuth(BaseModel):
 
 class SUserGet(SUserAdd):
     id: int
+
+
+class SUserGetWithRels(SUserGet):
+    role: SRoleGet
+
+
+class SUserPatch(BaseModel):
+    name: str | None = None
+    email: EmailStr | None = None
+    hashed_password: str | None = None
+    role_id: int | None = None
