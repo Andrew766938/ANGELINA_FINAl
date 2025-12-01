@@ -1,6 +1,9 @@
+from typing import TYPE_CHECKING
+
 from pydantic import BaseModel, EmailStr
 
-from app.schemes.roles import SRoleGet
+if TYPE_CHECKING:
+    from app.schemes.roles import SRoleGet
 
 
 class SUserAddRequest(BaseModel):
@@ -24,10 +27,6 @@ class SUserAuth(BaseModel):
 
 class SUserGet(SUserAdd):
     id: int
-
-
-class SUserGetWithRels(SUserGet):
-    role: "SRoleGet"
 
 
 class SUserPatch(BaseModel):
