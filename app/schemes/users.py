@@ -16,7 +16,7 @@ class SUserAdd(BaseModel):
     name: str
     email: EmailStr
     hashed_password: str
-    role_id: int
+    role_id: int | None = 1
 
 
 class SUserAuth(BaseModel):
