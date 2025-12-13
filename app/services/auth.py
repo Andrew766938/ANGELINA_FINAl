@@ -56,7 +56,7 @@ class AuthService(BaseService):
             new_user_data = SUserAdd(
                 email=user_data.email,
                 hashed_password=hashed_password,
-                name=user_data.name,
+                name=user_data.name
             )
             await self.db.users.add(new_user_data)
         except ObjectAlreadyExistsError:

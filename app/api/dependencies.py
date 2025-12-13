@@ -9,6 +9,7 @@ from app.exceptions.auth import (
     InvalidTokenHTTPError,
     IsNotAdminHTTPError,
     NoAccessTokenHTTPError,
+    
 )
 from app.services.auth import AuthService
 from app.database.db_manager import DBManager
@@ -56,6 +57,6 @@ async def check_is_admin(db: DBDep, user_id:UserIdDep):
     if user.role.name == "admin":
         return True
     else:
-        raise IsNotAdminHTTPError
+        raise IsNotAdminHTTPError 
 
 IsAdminDep = Annotated[int, Depends(check_is_admin)]
