@@ -2,7 +2,7 @@ const API_BASE_URL = 'http://localhost:8000';
 let selectedFlightForBooking = null;
 let allAirports = [];
 
-// Нотификация
+// Уведомление
 function showNotification(message, type = 'success') {
     const notification = document.getElementById('notification');
     notification.textContent = message;
@@ -22,7 +22,7 @@ function initializeTabs() {
         btn.addEventListener('click', () => {
             const tabName = btn.getAttribute('data-tab');
             
-            // Отключим все табы
+            // Отключаем все табы
             tabContents.forEach(tab => tab.classList.remove('active'));
             navBtns.forEach(b => b.classList.remove('active'));
             
@@ -33,12 +33,14 @@ function initializeTabs() {
             if (tabName === 'manage') {
                 loadAllFlights();
                 loadAirportsForSelect();
+            } else if (tabName === 'bookings') {
+                loadMyBookings();
             }
         });
     });
 }
 
-// Причализация
+// Приказализация
 function initializeEventListeners() {
     // Поиск рейсов
     document.getElementById('search-btn').addEventListener('click', searchFlights);
@@ -180,7 +182,7 @@ function displayFlights(flights, containerId) {
     container.innerHTML = '';
     
     if (flights.length === 0) {
-        container.innerHTML = '<p class="empty-state">Нет авайлыных рейсов</p>';
+        container.innerHTML = '<p class="empty-state">Нет доступных рейсов</p>';
         return;
     }
     
@@ -247,6 +249,7 @@ function showFlightModal(flight) {
     `;
     
     document.getElementById('modal-book-btn').onclick = () => {
+        document.getElementById('booking-flight-id').value = flight.id;
         modal.classList.remove('show');
         document.querySelector('[data-tab="bookings"]').click();
     };
@@ -254,7 +257,7 @@ function showFlightModal(flight) {
     modal.classList.add('show');
 }
 
-// Нагружение всех рейсов для управления
+// Загружение всех рейсов для управления
 async function loadAllFlights() {
     try {
         const response = await fetch(`${API_BASE_URL}/flights/`);
@@ -265,7 +268,7 @@ async function loadAllFlights() {
     }
 }
 
-// Нагружение аэропортов для селектов
+// Загружение аэропортов для селектов
 async function loadAirportsForSelect() {
     try {
         const response = await fetch(`${API_BASE_URL}/flights/airports`);
@@ -273,6 +276,10 @@ async function loadAirportsForSelect() {
         
         const fromSelect = document.getElementById('flight-from-airport');
         const toSelect = document.getElementById('flight-to-airport');
+        
+        // Очищаем старые опции (кроме первой)
+        fromSelect.innerHTML = '<option value="">Выберите аэропорт...</option>';
+        toSelect.innerHTML = '<option value="">Выберите аэропорт...</option>';
         
         allAirports.forEach(airport => {
             const option1 = document.createElement('option');
@@ -325,7 +332,7 @@ async function addAirport() {
             loadAirportsForSelect();
         } else {
             const error = await response.json();
-            showNotification(сerror.detail || 'Ошибка при добавлении аэропорта', 'error');
+            showNotification(error.detail || 'Ошибка при добавлении аэропорта', 'error');
         }
     } catch (error) {
         console.error('Error adding airport:', error);
@@ -411,7 +418,8 @@ async function createBooking() {
                 flight_id: parseInt(flightId),
                 passenger_name: passengerName,
                 passenger_email: passengerEmail,
-                passenger_phone: passengerPhone
+                passenger_phone: passengerPhone,
+                seats_count: 1
             })
         });
         
@@ -432,7 +440,7 @@ async function createBooking() {
     }
 }
 
-// Нагружение моих бронирований
+// Загружение моих бронирований
 async function loadMyBookings() {
     try {
         const response = await fetch(`${API_BASE_URL}/bookings/`);
@@ -449,13 +457,15 @@ async function loadMyBookings() {
         bookings.forEach(booking => {
             const card = document.createElement('div');
             card.className = 'booking-card';
+            const statusClass = booking.status.toLowerCase();
             card.innerHTML = `
                 <h4>ID: ${booking.id}</h4>
                 <p><strong>Пассажир:</strong> ${booking.passenger_name}</p>
                 <p><strong>Email:</strong> ${booking.passenger_email}</p>
                 <p><strong>Телефон:</strong> ${booking.passenger_phone}</p>
-                <p><strong>Рейс:</strong> ${booking.flight.flight_number}</p>
-                <p><strong>Статус:</strong> <span class="status-badge status-${booking.booking_status.toLowerCase()}">${booking.booking_status}</span></p>
+                <p><strong>Номер брони:</strong> ${booking.booking_number}</p>
+                <p><strong>Статус:</strong> <span class="status-badge status-${statusClass}">${booking.status}</span></p>
+                <p><strong>Сумма:</strong> ₽ ${booking.total_price.toLocaleString('ru-RU')}</p>
             `;
             container.appendChild(card);
         });
@@ -464,8 +474,10 @@ async function loadMyBookings() {
     }
 }
 
-// Нициализация при загружке страницы
+// Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     initializeTabs();
     initializeEventListeners();
+    // Загружаем рейсы при загрузке
+    loadAllFlights();
 });
