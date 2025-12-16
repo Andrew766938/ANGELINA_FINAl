@@ -210,6 +210,11 @@
         const API_URL = 'http://localhost:8000';
         let currentUser = null;
 
+        // ========== кЕШ ДАННЫХ В ПАМЯТИ ==========
+        let cachedFlights = [];
+        let cachedAirports = [];
+        let cachedBookings = [];
+
         // ========== ДЕМО-ДАННЫЕ (FALLBACK) ==========
         const DEMO_FLIGHTS = [
             { id: 1, flight_number: 'SU-001', airline: 'Аэрофлот', departure_airport_id: 1, arrival_airport_id: 2, departure_time: new Date().toISOString(), price: 5500, total_seats: 180, available_seats: 180 },
@@ -337,6 +342,9 @@
         function logout() {
             currentUser = null;
             localStorage.removeItem('user');
+            cachedFlights = [];
+            cachedAirports = [];
+            cachedBookings = [];
             showAuthModal();
             document.getElementById('login-email').value = 'demo@example.com';
             document.getElementById('login-password').value = 'demo123';
@@ -353,11 +361,16 @@
             document.getElementById('auth-modal').classList.add('hidden');
             document.getElementById('app').classList.remove('hidden');
             updateAccountTab();
-            // СНАЧАЛА ПОКАЗЫВАЕМ DEMO данные, ТОгДА трыемся API
-            renderFlights(document.getElementById('flights-list'), DEMO_FLIGHTS);
-            renderAirports(document.getElementById('airports-list'), DEMO_AIRPORTS);
-            renderBookings(document.getElementById('bookings-list'), DEMO_BOOKINGS);
-            // Теперь трыемся апи, если есть - обновляем
+            
+            // Отображаем DEMO иммедиатно
+            cachedFlights = DEMO_FLIGHTS;
+            cachedAirports = DEMO_AIRPORTS;
+            cachedBookings = DEMO_BOOKINGS;
+            renderFlights(document.getElementById('flights-list'), cachedFlights);
+            renderAirports(document.getElementById('airports-list'), cachedAirports);
+            renderBookings(document.getElementById('bookings-list'), cachedBookings);
+            
+            // Потом трыемся апи и обновляем
             loadFlightsFromAPI();
             loadAirportsFromAPI();
             loadBookingsFromAPI();
@@ -420,8 +433,8 @@
                 if (!res.ok) return;
                 const flights = await res.json();
                 if (flights && flights.length > 0) {
-                    renderFlights(document.getElementById('flights-list'), flights);
-                    notify('✅ Рейсы загружены из API', 'success');
+                    cachedFlights = flights;
+                    renderFlights(document.getElementById('flights-list'), cachedFlights);
                 }
             } catch (e) {}
         }
@@ -476,8 +489,8 @@
                 if (!res.ok) return;
                 const airports = await res.json();
                 if (airports && airports.length > 0) {
-                    renderAirports(document.getElementById('airports-list'), airports);
-                    notify('✅ Аэропорты загружены из API', 'success');
+                    cachedAirports = airports;
+                    renderAirports(document.getElementById('airports-list'), cachedAirports);
                 }
             } catch (e) {}
         }
@@ -530,8 +543,8 @@
                 if (!res.ok) return;
                 const bookings = await res.json();
                 if (bookings && bookings.length > 0) {
-                    renderBookings(document.getElementById('bookings-list'), bookings);
-                    notify('✅ Билеты загружены из API', 'success');
+                    cachedBookings = bookings;
+                    renderBookings(document.getElementById('bookings-list'), cachedBookings);
                 }
             } catch (e) {}
         }
