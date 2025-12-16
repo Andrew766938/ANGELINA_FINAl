@@ -153,8 +153,8 @@
                     <div class="form-card">
                         <h3>➕ Создать новый аэропорт</h3>
                         <div class="form-row">
-                            <input type="text" id="airport-code" placeholder="Код (например: MOW)">
-                            <input type="text" id="airport-name" placeholder="Название">
+                            <input type="text" id="airport-code" placeholder="Код (например: MSK)">
+                            <input type="text" id="airport-name" placeholder="Название аэропорта">
                         </div>
                         <div class="form-row">
                             <input type="text" id="airport-city" placeholder="Город">
@@ -271,18 +271,19 @@
 
         // ============== INIT ==============
         document.addEventListener('DOMContentLoaded', () => {
-            clearAuthFields();
+            clearAllAuthFields();
             showAuthModal();
         });
 
 
         // ============== AUTH ==============
-        function clearAuthFields() {
+        function clearAllAuthFields() {
             document.getElementById('login-email').value = '';
             document.getElementById('login-password').value = '';
             document.getElementById('register-name').value = '';
             document.getElementById('register-email').value = '';
             document.getElementById('register-password').value = '';
+            document.getElementById('register-role').value = 'user';
         }
 
         function switchAuthForm() {
@@ -316,7 +317,12 @@
             const role = document.getElementById('register-role').value;
             
             if (!name || !email || !password) {
-                notify('⚠️ Заполните все поля', 'error');
+                notify('⚠️ Заполните ВСЕ поля', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                notify('⚠️ Пароль должен состоять не менее из 6 символов', 'error');
                 return;
             }
             
@@ -336,7 +342,7 @@
             cachedFlights = [];
             cachedAirports = [];
             cachedBookings = [];
-            clearAuthFields();
+            clearAllAuthFields();
             showAuthModal();
             notify('✅ Вы вышли из аккаунта', 'success');
         }
@@ -597,7 +603,7 @@
                 return;
             }
             
-            const code = document.getElementById('airport-code').value.trim();
+            const code = document.getElementById('airport-code').value.trim().toUpperCase();
             const name = document.getElementById('airport-name').value.trim();
             const city = document.getElementById('airport-city').value.trim();
             const country = document.getElementById('airport-country').value.trim();
@@ -607,11 +613,16 @@
                 return;
             }
             
+            if (code.length < 2 || code.length > 3) {
+                notify('⚠️ Код аэропорта должен быть 2-3 латинских буквы', 'error');
+                return;
+            }
+            
             try {
                 const res = await fetch(`${API_URL}/flights/airports`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code: code.toUpperCase(), name, city, country })
+                    body: JSON.stringify({ code, name, city, country })
                 });
                 
                 if (res.ok) {
@@ -620,7 +631,6 @@
                     document.getElementById('airport-name').value = '';
                     document.getElementById('airport-city').value = '';
                     document.getElementById('airport-country').value = '';
-                    cachedAirports = [];
                     await loadAllAirports();
                 } else {
                     const err = await res.json();
