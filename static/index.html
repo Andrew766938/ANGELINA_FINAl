@@ -3,42 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Крылья онлайн</title>
+    <title>✈️ Крылья онлайн</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <!-- Модаль авторизации -->
-    <div id="auth-modal" class="auth-modal show">
+    <!-- ============== AUTH MODAL ============== -->
+    <div id="auth-modal" class="auth-modal">
         <div class="auth-container">
             <div class="auth-box">
                 <h1>✈️ Крылья онлайн</h1>
+                <p class="subtitle">Система бронирования авиабилетов</p>
                 
-                <!-- Вход -->
+                <!-- LOGIN FORM -->
                 <div id="login-form" class="auth-form active">
                     <h2>Вход</h2>
-                    <input type="email" id="login-email" placeholder="Email" value="demo@example.com">
-                    <input type="password" id="login-password" placeholder="Password" value="demo123">
-                    <button onclick="login()" class="btn-auth">ВОЙТИ</button>
-                    <p class="auth-link">Нет аккаунта? <a onclick="toggleAuth()">Зарегистрироваться</a></p>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="login-email" placeholder="demo@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" id="login-password" placeholder="demo123">
+                    </div>
+                    <button class="btn-auth" onclick="login()">ВОЙТИ</button>
+                    <p class="auth-link">Нет аккаунта? <a onclick="switchAuthForm()">Зарегистрироваться</a></p>
                 </div>
                 
-                <!-- Регистрация -->
+                <!-- REGISTER FORM -->
                 <div id="register-form" class="auth-form">
                     <h2>Регистрация</h2>
-                    <input type="text" id="register-name" placeholder="Full Name">
-                    <input type="email" id="register-email" placeholder="Email">
-                    <input type="password" id="register-password" placeholder="Password">
-                    <button onclick="register()" class="btn-auth">ЗАРЕГИСТРИРОВАТЬСЯ</button>
-                    <p class="auth-link">Уже есть аккаунт? <a onclick="toggleAuth()">Войти</a></p>
+                    <div class="form-group">
+                        <label>ФИО</label>
+                        <input type="text" id="register-name" placeholder="Иван Иванов">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="register-email" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" id="register-password" placeholder="Минимум 6 символов">
+                    </div>
+                    <button class="btn-auth" onclick="register()">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+                    <p class="auth-link">Уже есть аккаунт? <a onclick="switchAuthForm()">Войти</a></p>
                 </div>
                 
-                <button onclick="guestLogin()" class="btn-guest">Войти как гость</button>
+                <div class="divider"><span>или</span></div>
+                <button class="btn-guest" onclick="guestLogin()">👤 Войти как гость</button>
             </div>
         </div>
     </div>
 
-    <!-- Основное приложение -->
-    <div id="app" class="app" style="display: none;">
+    <!-- ============== MAIN APP ============== -->
+    <div id="app" class="app hidden">
+        <!-- NAVBAR -->
         <nav class="navbar">
             <div class="navbar-brand">
                 <h1>✈️ Крылья онлайн</h1>
@@ -47,110 +65,173 @@
                 <button class="nav-btn active" onclick="switchTab('flights')">Flights</button>
                 <button class="nav-btn" onclick="switchTab('airports')">Airports</button>
                 <button class="nav-btn" onclick="switchTab('bookings')">Bookings</button>
+                <button class="nav-btn" onclick="switchTab('account')">Account</button>
                 <button class="nav-btn logout" onclick="logout()">LOGOUT</button>
             </div>
         </nav>
 
         <div class="container">
-            <!-- Flights -->
+            <!-- ============== FLIGHTS TAB ============== -->
             <div id="flights" class="tab active">
-                <h2>✈️ Flights</h2>
+                <h2>✈️ Поиск рейсов</h2>
                 <div class="action-buttons">
-                    <button onclick="loadAllFlights()" class="btn-primary">Load All Flights</button>
+                    <button class="btn-primary" onclick="loadAllFlights()">📋 Load All Flights</button>
                 </div>
                 <div id="flights-list" class="list"></div>
             </div>
 
-            <!-- Airports -->
+            <!-- ============== AIRPORTS TAB ============== -->
             <div id="airports" class="tab">
-                <h2>Airports</h2>
+                <h2>🏢 Аэропорты</h2>
                 <div class="form-card">
-                    <input type="text" id="airport-code" placeholder="Code (MOW)">
-                    <input type="text" id="airport-name" placeholder="Name">
-                    <input type="text" id="airport-city" placeholder="City">
-                    <input type="text" id="airport-country" placeholder="Country">
-                    <button onclick="addAirport()" class="btn-primary">ADD AIRPORT</button>
+                    <h3>Добавить новый аэропорт</h3>
+                    <input type="text" id="airport-code" placeholder="Код (MOW)" maxlength="3">
+                    <input type="text" id="airport-name" placeholder="Название (Шереметьево)">
+                    <input type="text" id="airport-city" placeholder="Город (Москва)">
+                    <input type="text" id="airport-country" placeholder="Страна (Россия)">
+                    <button class="btn-primary" onclick="addAirport()">✅ ADD AIRPORT</button>
                 </div>
             </div>
 
-            <!-- Bookings -->
+            <!-- ============== BOOKINGS TAB ============== -->
             <div id="bookings" class="tab">
-                <h2>Bookings</h2>
+                <h2>🎫 Бронирование</h2>
                 <div class="form-card">
-                    <input type="number" id="booking-flight" placeholder="Flight ID">
-                    <input type="text" id="booking-name" placeholder="Passenger Name">
+                    <h3>Забронировать билет</h3>
+                    <input type="number" id="booking-flight" placeholder="ID рейса" min="1">
+                    <input type="text" id="booking-name" placeholder="ФИО пассажира">
                     <input type="email" id="booking-email" placeholder="Email">
-                    <input type="tel" id="booking-phone" placeholder="Phone">
-                    <button onclick="createBooking()" class="btn-primary">BOOK</button>
+                    <input type="tel" id="booking-phone" placeholder="Номер телефона">
+                    <button class="btn-primary" onclick="createBooking()">🎟️ ЗАБРОНИРОВАТЬ</button>
+                </div>
+            </div>
+
+            <!-- ============== ACCOUNT TAB ============== -->
+            <div id="account" class="tab">
+                <h2>👤 Мой аккаунт</h2>
+                <div class="account-info">
+                    <h3>📋 Информация об аккаунте</h3>
+                    <p><strong>ФИО:</strong> <span id="acc-name">-</span></p>
+                    <p><strong>Email:</strong> <span id="acc-email">-</span></p>
+                    <p><strong>Статус:</strong> <span id="acc-status">-</span></p>
+                    <p><strong>Дата входа:</strong> <span id="acc-date">-</span></p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Notification -->
+    <!-- NOTIFICATION -->
     <div id="notification" class="notification"></div>
 
     <script>
         const API_URL = 'http://localhost:8000';
-        let user = JSON.parse(localStorage.getItem('user')) || null;
+        let currentUser = null;
 
-        if (user) {
-            showApp();
-        }
+        // ============== INIT ============== 
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('user');
+            if (saved) {
+                currentUser = JSON.parse(saved);
+                showApp();
+            } else {
+                showAuthModal();
+            }
+        });
 
-        function toggleAuth() {
+        // ============== AUTH ============== 
+        function switchAuthForm() {
             document.getElementById('login-form').classList.toggle('active');
             document.getElementById('register-form').classList.toggle('active');
         }
 
         function login() {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+
             if (!email || !password) {
-                notify('Fill all fields', 'error');
+                notify('Заполните все поля', 'error');
                 return;
             }
-            user = { email, name: email.split('@')[0] };
-            localStorage.setItem('user', JSON.stringify(user));
+
+            currentUser = {
+                name: email.split('@')[0],
+                email: email,
+                type: 'registered',
+                loginTime: new Date().toLocaleString('ru-RU')
+            };
+
+            localStorage.setItem('user', JSON.stringify(currentUser));
             showApp();
+            notify('Успешно вошли!', 'success');
         }
 
         function register() {
-            const name = document.getElementById('register-name').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
+            const name = document.getElementById('register-name').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value.trim();
+
             if (!name || !email || !password) {
-                notify('Fill all fields', 'error');
+                notify('Заполните все поля', 'error');
                 return;
             }
-            user = { email, name };
-            localStorage.setItem('user', JSON.stringify(user));
+
+            if (password.length < 6) {
+                notify('Пароль должен быть минимум 6 символов', 'error');
+                return;
+            }
+
+            currentUser = {
+                name: name,
+                email: email,
+                type: 'registered',
+                loginTime: new Date().toLocaleString('ru-RU')
+            };
+
+            localStorage.setItem('user', JSON.stringify(currentUser));
             showApp();
+            notify('Успешно зарегистрированы!', 'success');
         }
 
         function guestLogin() {
-            user = { email: 'guest@example.com', name: 'Guest' };
-            localStorage.setItem('user', JSON.stringify(user));
-            showApp();
-        }
+            currentUser = {
+                name: 'Guest',
+                email: 'guest@example.com',
+                type: 'guest',
+                loginTime: new Date().toLocaleString('ru-RU')
+            };
 
-        function showApp() {
-            document.getElementById('auth-modal').classList.remove('show');
-            document.getElementById('app').style.display = 'block';
-            loadAllFlights();
+            localStorage.setItem('user', JSON.stringify(currentUser));
+            showApp();
+            notify('Вошли как гость', 'success');
         }
 
         function logout() {
-            user = null;
+            currentUser = null;
             localStorage.removeItem('user');
-            document.getElementById('auth-modal').classList.add('show');
-            document.getElementById('app').style.display = 'none';
+            document.getElementById('app').classList.add('hidden');
+            showAuthModal();
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
+            notify('Вы вышли из аккаунта', 'success');
         }
 
-        function switchTab(tab) {
+        // ============== UI ============== 
+        function showAuthModal() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+            document.getElementById('app').classList.add('hidden');
+        }
+
+        function showApp() {
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            updateAccountTab();
+            loadAllFlights();
+        }
+
+        function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tab).classList.add('active');
+            document.querySelectorAll('.nav-btn:not(.logout)').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
         }
 
@@ -161,72 +242,98 @@
             setTimeout(() => notif.classList.remove('show'), 3000);
         }
 
+        // ============== ACCOUNT ============== 
+        function updateAccountTab() {
+            if (!currentUser) return;
+            document.getElementById('acc-name').textContent = currentUser.name;
+            document.getElementById('acc-email').textContent = currentUser.email;
+            document.getElementById('acc-status').textContent = currentUser.type === 'guest' ? 'Гость' : 'Зарегистрирован';
+            document.getElementById('acc-date').textContent = currentUser.loginTime;
+        }
+
+        // ============== FLIGHTS ============== 
         async function loadAllFlights() {
             try {
                 const res = await fetch(`${API_URL}/flights/`);
                 const flights = await res.json();
                 const list = document.getElementById('flights-list');
-                if (!flights.length) {
-                    list.innerHTML = '<p>No flights found</p>';
+
+                if (!flights || flights.length === 0) {
+                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: white; padding: 40px;">Рейсы не найдены</div>';
                     return;
                 }
+
                 list.innerHTML = flights.map(f => `
                     <div class="card">
                         <h3>${f.flight_number}</h3>
-                        <p><strong>${f.airline}</strong></p>
-                        <p>From: ${f.departure_airport_id} → To: ${f.arrival_airport_id}</p>
-                        <p>Depart: ${new Date(f.departure_time).toLocaleString()}</p>
-                        <p>Seats: ${f.available_seats}/${f.total_seats} | Price: ${f.price}₽</p>
-                        <button onclick="selectFlight(${f.id})" class="btn-select">SELECT</button>
+                        <p><strong>Авиакомпания:</strong> ${f.airline}</p>
+                        <p><strong>Маршрут:</strong> ${f.departure_airport_id} → ${f.arrival_airport_id}</p>
+                        <p><strong>Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
+                        <p><strong>Цена:</strong> ₽${f.price}</p>
+                        <p><strong>Места:</strong> ${f.available_seats}/${f.total_seats}</p>
+                        <button class="btn-select" onclick="selectFlight(${f.id})">🎟️ ВЫБРАТЬ</button>
                     </div>
                 `).join('');
             } catch (e) {
-                console.error(e);
-                notify('Error loading flights', 'error');
+                console.error('Error:', e);
+                notify('Ошибка загрузки рейсов', 'error');
             }
         }
 
         function selectFlight(id) {
             document.getElementById('booking-flight').value = id;
             switchTab('bookings');
+            document.querySelector('[onclick="switchTab(\'bookings\')"]').classList.add('active');
         }
 
+        // ============== AIRPORTS ============== 
         async function addAirport() {
-            const code = document.getElementById('airport-code').value;
-            const name = document.getElementById('airport-name').value;
-            const city = document.getElementById('airport-city').value;
-            const country = document.getElementById('airport-country').value;
+            const code = document.getElementById('airport-code').value.trim().toUpperCase();
+            const name = document.getElementById('airport-name').value.trim();
+            const city = document.getElementById('airport-city').value.trim();
+            const country = document.getElementById('airport-country').value.trim();
+
             if (!code || !name || !city || !country) {
-                notify('Fill all fields', 'error');
+                notify('Заполните все поля', 'error');
                 return;
             }
+
             try {
-                await fetch(`${API_URL}/flights/airports`, {
+                const res = await fetch(`${API_URL}/flights/airports`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ code, name, city, country })
                 });
-                notify('Airport added!');
-                document.getElementById('airport-code').value = '';
-                document.getElementById('airport-name').value = '';
-                document.getElementById('airport-city').value = '';
-                document.getElementById('airport-country').value = '';
+
+                if (res.ok) {
+                    notify('Аэропорт добавлен!', 'success');
+                    document.getElementById('airport-code').value = '';
+                    document.getElementById('airport-name').value = '';
+                    document.getElementById('airport-city').value = '';
+                    document.getElementById('airport-country').value = '';
+                } else {
+                    notify('Ошибка добавления', 'error');
+                }
             } catch (e) {
-                notify('Error adding airport', 'error');
+                console.error('Error:', e);
+                notify('Ошибка подключения', 'error');
             }
         }
 
+        // ============== BOOKINGS ============== 
         async function createBooking() {
-            const flight = document.getElementById('booking-flight').value;
-            const name = document.getElementById('booking-name').value;
-            const email = document.getElementById('booking-email').value;
-            const phone = document.getElementById('booking-phone').value;
+            const flight = document.getElementById('booking-flight').value.trim();
+            const name = document.getElementById('booking-name').value.trim();
+            const email = document.getElementById('booking-email').value.trim();
+            const phone = document.getElementById('booking-phone').value.trim();
+
             if (!flight || !name || !email || !phone) {
-                notify('Fill all fields', 'error');
+                notify('Заполните все поля', 'error');
                 return;
             }
+
             try {
-                await fetch(`${API_URL}/bookings/`, {
+                const res = await fetch(`${API_URL}/bookings/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -236,13 +343,20 @@
                         passenger_phone: phone
                     })
                 });
-                notify('Booking created!');
-                document.getElementById('booking-flight').value = '';
-                document.getElementById('booking-name').value = '';
-                document.getElementById('booking-email').value = '';
-                document.getElementById('booking-phone').value = '';
+
+                if (res.ok) {
+                    const booking = await res.json();
+                    notify(`Билет забронирован! №${booking.booking_number || flight}`, 'success');
+                    document.getElementById('booking-flight').value = '';
+                    document.getElementById('booking-name').value = '';
+                    document.getElementById('booking-email').value = '';
+                    document.getElementById('booking-phone').value = '';
+                } else {
+                    notify('Ошибка бронирования', 'error');
+                }
             } catch (e) {
-                notify('Error creating booking', 'error');
+                console.error('Error:', e);
+                notify('Ошибка подключения', 'error');
             }
         }
     </script>
