@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class AirportBase(BaseModel):
-    code: str = Field(..., min_length=3, max_length=3)
+    code: str = Field(..., min_length=2, max_length=3)
     name: str = Field(..., min_length=1, max_length=100)
     city: str = Field(..., min_length=1, max_length=100)
     country: str = Field(..., min_length=1, max_length=100)
