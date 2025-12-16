@@ -81,6 +81,25 @@
             <div id="flights" class="tab active">
                 <h2>🛫 Поиск рейсов</h2>
                 
+                <!-- Форма бронирования -->
+                <div id="booking-form-section" class="form-card" style="display: none; margin-bottom: 25px;">
+                    <h3>🎟️ Оформить бронирование</h3>
+                    <div class="form-row">
+                        <input type="hidden" id="booking-flight-id">
+                        <span style="grid-column: 1/-1; color: #2d3748; font-weight: 600;" id="booking-flight-info">-</span>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="booking-name" placeholder="ФИО пассажира">
+                        <input type="email" id="booking-email" placeholder="Email">
+                    </div>
+                    <div class="form-row">
+                        <input type="tel" id="booking-phone" placeholder="Номер телефона">
+                        <input type="number" id="booking-seats" placeholder="Кол-во мест" min="1" value="1">
+                    </div>
+                    <button class="btn-primary" onclick="createBooking()">✅ БРОНИРОВАТЬ</button>
+                    <button class="btn-secondary" onclick="cancelBooking()" style="background: #e2e8f0; color: #718096; margin-top: 10px;">❌ Отмена</button>
+                </div>
+                
                 <div class="tabs-container">
                     <button class="tab-btn active" onclick="switchFlightTab('all')">📋 Все рейсы</button>
                     <button class="tab-btn" onclick="switchFlightTab('search')">🔍 Поиск</button>
@@ -247,7 +266,6 @@
 
         // ============== INIT ==============
         document.addEventListener('DOMContentLoaded', () => {
-            // ВСЕГДА показываем окно регистрации при запуске
             showAuthModal();
         });
 
@@ -266,7 +284,6 @@
                 notify('⚠️ Заполните все поля', 'error');
                 return;
             }
-            // Для демо определяем роль по email
             const role = email.includes('admin') ? 'admin' : 'user';
             currentUser = {
                 name: email.split('@')[0],
@@ -297,7 +314,7 @@
                 loginTime: new Date().toLocaleString('ru-RU')
             };
             showApp();
-            notify(`✅ Зарегистрированы как ${role === 'admin' ? 'Администратор' : 'Пользователь'}!`, 'success');
+            notify(`✅ Зарегистрированы как ${role === 'admin' ? '👑 Администратор' : '👤 Пользователь'}!`, 'success');
         }
 
 
@@ -325,14 +342,12 @@
             document.getElementById('app').classList.remove('hidden');
             updateAccountTab();
             
-            // Показываем/скрываем элементы в зависимости от роли
             if (currentUser.role === 'admin') {
                 document.getElementById('create-airport-section').style.display = 'block';
             } else {
                 document.getElementById('create-airport-section').style.display = 'none';
             }
             
-            // Загружаем данные
             await loadAllFlights();
             await loadAllAirports();
             await loadMyBookings();
@@ -418,7 +433,7 @@
                     <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
                     <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
                     <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
-                    <button class="btn-select" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id})">🎟️ ЗАБРОНИРОВАТЬ</button>
+                    <button class="btn-select" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id}, ${f.price})">🎟️ ЗАБРОНИРОВАТЬ</button>
                 </div>
             `).join('');
         }
@@ -448,7 +463,7 @@
                         <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
                         <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
                         <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
-                        <button class="btn-select" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id})">🎟️ ЗАБРОНИРОВАТЬ</button>
+                        <button class="btn-select" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id}, ${f.price})">🎟️ ЗАБРОНИРОВАТЬ</button>
                     </div>
                 `).join('');
                 notify(`✅ Найдено ${flights.length} рейсов`, 'success');
@@ -459,9 +474,68 @@
         }
 
 
-        function selectFlight(id, flightNumber, fromId, toId) {
-            selectedFlightForBooking = { id, flightNumber, fromId, toId };
-            notify(`✈️ Рейс ${flightNumber} выбран. Перейдите во вкладку "Рейсы" для бронирования.`, 'success');
+        function selectFlight(id, flightNumber, fromId, toId, price) {
+            selectedFlightForBooking = { id, flightNumber, fromId, toId, price };
+            document.getElementById('booking-flight-id').value = id;
+            document.getElementById('booking-flight-info').textContent = `✈️ ${flightNumber} | Маршрут: ${fromId} ➡️ ${toId} | Цена: ₽${price}`;
+            document.getElementById('booking-form-section').style.display = 'block';
+            document.getElementById('booking-name').focus();
+            notify('✅ Рейс выбран. Заполните данные!', 'success');
+        }
+
+        function cancelBooking() {
+            selectedFlightForBooking = null;
+            document.getElementById('booking-flight-id').value = '';
+            document.getElementById('booking-flight-info').textContent = '-';
+            document.getElementById('booking-form-section').style.display = 'none';
+            document.getElementById('booking-name').value = '';
+            document.getElementById('booking-email').value = '';
+            document.getElementById('booking-phone').value = '';
+            document.getElementById('booking-seats').value = '1';
+            notify('❌ Бронирование отменено', 'error');
+        }
+
+        async function createBooking() {
+            const flightId = document.getElementById('booking-flight-id').value;
+            const name = document.getElementById('booking-name').value.trim();
+            const email = document.getElementById('booking-email').value.trim();
+            const phone = document.getElementById('booking-phone').value.trim();
+            const seats = document.getElementById('booking-seats').value.trim() || '1';
+            
+            if (!flightId) {
+                notify('⚠️ Сначала выберите рейс', 'error');
+                return;
+            }
+            if (!name || !email || !phone) {
+                notify('⚠️ Заполните ВСЕ поля', 'error');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/bookings/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        flight_id: parseInt(flightId),
+                        passenger_name: name,
+                        passenger_email: email,
+                        passenger_phone: phone,
+                        seats_count: parseInt(seats)
+                    })
+                });
+                if (res.ok) {
+                    const booking = await res.json();
+                    notify(`✅ Билет забронирован! №${booking.booking_number || flightId}`, 'success');
+                    cancelBooking();
+                    await loadMyBookings();
+                } else {
+                    const err = await res.json();
+                    notify(`❌ ${err.detail || 'Ошибка бронирования'}`, 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                notify('❌ Ошибка подключения', 'error');
+            }
         }
 
 
