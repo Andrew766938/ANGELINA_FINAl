@@ -1,6 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, Field
 from app.models.booking import BookingStatus
+from app.schemes.flights import FlightListRead
 
 
 class BookingBase(BaseModel):
@@ -25,8 +26,6 @@ class BookingRead(BookingBase):
     user_id: int
     total_price: float
     status: BookingStatus
-    created_at: datetime
-    updated_at: datetime
 
     class Config:
         from_attributes = True
@@ -41,10 +40,16 @@ class BookingListRead(BaseModel):
     seats_count: int
     total_price: float
     status: BookingStatus
-    created_at: datetime
+    booking_status: str = Field(alias="status")
+    flight: FlightListRead
 
     class Config:
         from_attributes = True
+        populate_by_name = True
+
+
+class PaymentCreate(BaseModel):
+    payment_method: str = Field(..., min_length=1, max_length=50)
 
 
 class PaymentRead(BaseModel):
@@ -54,7 +59,6 @@ class PaymentRead(BaseModel):
     payment_method: str
     transaction_id: str
     status: str
-    created_at: datetime
 
     class Config:
         from_attributes = True
