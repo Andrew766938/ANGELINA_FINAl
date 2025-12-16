@@ -12,7 +12,7 @@
         <div class="auth-container">
             <div class="auth-box">
                 <h1>✈️ Крылья</h1>
-                <p class="subtitle">Онлайн система бронирования</p>
+                <p class="subtitle">Онлайн система бронирования авиабилетов</p>
                 
                 <!-- LOGIN FORM -->
                 <div id="login-form" class="auth-form active">
@@ -25,7 +25,7 @@
                         <label>Пароль</label>
                         <input type="password" id="login-password" placeholder="demo123" value="demo123">
                     </div>
-                    <button class="btn-auth" onclick="login()">ВОЙТИ</button>
+                    <button class="btn-auth" onclick="login()">🔓 ВОЙТИ</button>
                     <p class="auth-link">Нет аккаунта? <a onclick="switchAuthForm()">Зарегистрироваться</a></p>
                 </div>
                 
@@ -44,12 +44,12 @@
                         <label>Пароль</label>
                         <input type="password" id="register-password" placeholder="Минимум 6 символов">
                     </div>
-                    <button class="btn-auth" onclick="register()">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+                    <button class="btn-auth" onclick="register()">✍️ ЗАРЕГИСТРИРОВАТЬСЯ</button>
                     <p class="auth-link">Уже есть аккаунт? <a onclick="switchAuthForm()">Войти</a></p>
                 </div>
                 
                 <div class="divider"><span>ИЛИ</span></div>
-                <button class="btn-guest" onclick="guestLogin()">👤 Гость</button>
+                <button class="btn-guest" onclick="guestLogin()">👤 ГОСТЬ</button>
             </div>
         </div>
     </div>
@@ -62,27 +62,27 @@
                 <h1>✈️ Крылья</h1>
             </div>
             <div class="navbar-menu">
-                <button class="nav-btn active" onclick="switchMainTab('flights')">Flights</button>
-                <button class="nav-btn" onclick="switchMainTab('airports')">Airports</button>
-                <button class="nav-btn" onclick="switchMainTab('bookings')">Bookings</button>
-                <button class="nav-btn" onclick="switchMainTab('account')">Account</button>
-                <button class="nav-btn logout" onclick="logout()">LOGOUT</button>
+                <button class="nav-btn active" onclick="switchMainTab('flights')">🛫 Рейсы</button>
+                <button class="nav-btn" onclick="switchMainTab('airports')">🏢 Аэропорты</button>
+                <button class="nav-btn" onclick="switchMainTab('bookings')">🎫 Билеты</button>
+                <button class="nav-btn" onclick="switchMainTab('account')">👤 Профиль</button>
+                <button class="nav-btn logout" onclick="logout()">🚪 ВЫХОД</button>
             </div>
         </nav>
 
         <div class="container">
             <!-- ============== FLIGHTS TAB ============== -->
             <div id="flights" class="tab active">
-                <h2>🎉 Найти рейсы</h2>
+                <h2>🛫 Поиск рейсов</h2>
                 
                 <div class="tabs-container">
-                    <button class="tab-btn active" onclick="switchFlightTab('all')">All Flights</button>
-                    <button class="tab-btn" onclick="switchFlightTab('search')">Search</button>
+                    <button class="tab-btn active" onclick="switchFlightTab('all')">📋 Все рейсы</button>
+                    <button class="tab-btn" onclick="switchFlightTab('search')">🔍 Поиск</button>
                 </div>
 
                 <!-- All Flights -->
                 <div id="all-flights-tab" class="tab active">
-                    <button class="btn-primary" onclick="loadAllFlights()" style="margin-bottom: 20px; max-width: 200px;">📋 Load All Flights</button>
+                    <button class="btn-primary" onclick="loadAllFlights()" style="margin-bottom: 20px; max-width: 200px;">📥 Загрузить все</button>
                     <div id="flights-list" class="cards-grid"></div>
                 </div>
 
@@ -91,10 +91,10 @@
                     <div class="form-card">
                         <h3>🔍 Поиск рейсов</h3>
                         <div class="form-row">
-                            <input type="number" id="search-from" placeholder="ID аэропорта вылета">
-                            <input type="number" id="search-to" placeholder="ID аэропорта прилета">
+                            <input type="number" id="search-from" placeholder="ID откуда">
+                            <input type="number" id="search-to" placeholder="ID куда">
                         </div>
-                        <button class="btn-primary" onclick="searchFlights()">🔍 ПОИСК</button>
+                        <button class="btn-primary" onclick="searchFlights()">🔎 НАЙТИ</button>
                     </div>
                     <div id="search-results" class="cards-grid"></div>
                 </div>
@@ -105,20 +105,20 @@
                 <h2>🏢 Аэропорты</h2>
                 
                 <div class="tabs-container">
-                    <button class="tab-btn active" onclick="switchAirportTab('list')">List</button>
-                    <button class="tab-btn" onclick="switchAirportTab('add')">Add New</button>
+                    <button class="tab-btn active" onclick="switchAirportTab('list')">📋 Список</button>
+                    <button class="tab-btn" onclick="switchAirportTab('add')">➕ Добавить</button>
                 </div>
 
                 <!-- Airport List -->
                 <div id="airport-list-tab" class="tab active">
-                    <button class="btn-primary" onclick="loadAllAirports()" style="margin-bottom: 20px; max-width: 200px;">📋 Load Airports</button>
+                    <button class="btn-primary" onclick="loadAllAirports()" style="margin-bottom: 20px; max-width: 200px;">📥 Загрузить</button>
                     <div id="airports-list" class="cards-grid"></div>
                 </div>
 
                 <!-- Add Airport -->
                 <div id="airport-add-tab" class="tab">
                     <div class="form-card">
-                        <h3>➕ Добавить новый аэропорт</h3>
+                        <h3>➕ Новый аэропорт</h3>
                         <div class="form-row">
                             <input type="text" id="airport-code" placeholder="Код (MOW)" maxlength="3">
                             <input type="text" id="airport-name" placeholder="Название">
@@ -134,16 +134,16 @@
 
             <!-- ============== BOOKINGS TAB ============== -->
             <div id="bookings" class="tab">
-                <h2>🎟️ Мои билеты</h2>
+                <h2>🎫 Мои билеты</h2>
                 
                 <div class="tabs-container">
-                    <button class="tab-btn active" onclick="switchBookingTab('list')">My Tickets</button>
-                    <button class="tab-btn" onclick="switchBookingTab('new')">Book New</button>
+                    <button class="tab-btn active" onclick="switchBookingTab('list')">📋 Мои билеты</button>
+                    <button class="tab-btn" onclick="switchBookingTab('new')">🎟️ Забронировать</button>
                 </div>
 
                 <!-- My Bookings -->
                 <div id="booking-list-tab" class="tab active">
-                    <button class="btn-primary" onclick="loadMyBookings()" style="margin-bottom: 20px; max-width: 200px;">📋 Load My Tickets</button>
+                    <button class="btn-primary" onclick="loadMyBookings()" style="margin-bottom: 20px; max-width: 200px;">📥 Загрузить</button>
                     <div id="bookings-list" class="cards-grid"></div>
                 </div>
 
@@ -168,7 +168,7 @@
 
             <!-- ============== ACCOUNT TAB ============== -->
             <div id="account" class="tab">
-                <h2>👤 Мой Профиль</h2>
+                <h2>👤 Мой профиль</h2>
                 
                 <div class="account-section">
                     <h3>📋 Основная информация</h3>
@@ -222,7 +222,7 @@
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value.trim();
             if (!email || !password) {
-                notify('Заполните все поля', 'error');
+                notify('⚠️ Заполните все поля', 'error');
                 return;
             }
             currentUser = {
@@ -233,7 +233,7 @@
             };
             localStorage.setItem('user', JSON.stringify(currentUser));
             showApp();
-            notify('Успешно вошли!', 'success');
+            notify('✅ Успешно вошли!', 'success');
         }
 
         function register() {
@@ -241,7 +241,7 @@
             const email = document.getElementById('register-email').value.trim();
             const password = document.getElementById('register-password').value.trim();
             if (!name || !email || !password) {
-                notify('Заполните все поля', 'error');
+                notify('⚠️ Заполните все поля', 'error');
                 return;
             }
             currentUser = {
@@ -252,19 +252,19 @@
             };
             localStorage.setItem('user', JSON.stringify(currentUser));
             showApp();
-            notify('Успешно зарегистрированы!', 'success');
+            notify('✅ Успешно зарегистрированы!', 'success');
         }
 
         function guestLogin() {
             currentUser = {
-                name: 'Guest',
+                name: 'Гость',
                 email: 'guest@example.com',
                 type: 'guest',
                 loginTime: new Date().toLocaleString('ru-RU')
             };
             localStorage.setItem('user', JSON.stringify(currentUser));
             showApp();
-            notify('Вошли как гость', 'success');
+            notify('✅ Вошли как гость', 'success');
         }
 
         function logout() {
@@ -274,7 +274,7 @@
             showAuthModal();
             document.getElementById('login-email').value = 'demo@example.com';
             document.getElementById('login-password').value = 'demo123';
-            notify('Вы вышли из аккаунта', 'success');
+            notify('✅ Вы вышли из аккаунта', 'success');
         }
 
         // ============== UI ==============
@@ -287,6 +287,9 @@
             document.getElementById('auth-modal').classList.add('hidden');
             document.getElementById('app').classList.remove('hidden');
             updateAccountTab();
+            loadAllFlights();
+            loadAllAirports();
+            loadMyBookings();
         }
 
         function switchMainTab(tabName) {
@@ -332,7 +335,7 @@
             if (!currentUser) return;
             document.getElementById('acc-name').textContent = currentUser.name;
             document.getElementById('acc-email').textContent = currentUser.email;
-            document.getElementById('acc-type').textContent = currentUser.type === 'guest' ? 'Гость' : 'Зарегистрирован';
+            document.getElementById('acc-type').textContent = currentUser.type === 'guest' ? '👤 Гость' : '✅ Зарегистрирован';
             document.getElementById('acc-date').textContent = currentUser.loginTime;
         }
 
@@ -343,22 +346,23 @@
                 const flights = await res.json();
                 const list = document.getElementById('flights-list');
                 if (!flights || flights.length === 0) {
-                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">Рейсы не найдены</div>';
+                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">✈️ Рейсы не найдены</div>';
                     return;
                 }
                 list.innerHTML = flights.map(f => `
                     <div class="card">
                         <h3>${f.flight_number}</h3>
-                        <p><strong>${f.airline}</strong></p>
-                        <p><strong>Маршрут:</strong> ${f.departure_airport_id} → ${f.arrival_airport_id}</p>
-                        <p><strong>Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
-                        <p><strong>Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
-                        <p><strong>Места:</strong> ${f.available_seats}/${f.total_seats}</p>
-                        <button class="btn-select" onclick="selectFlight(${f.id})">BOOK</button>
+                        <p><strong>🎫 ${f.airline}</strong></p>
+                        <p><strong>📍 Маршрут:</strong> ${f.departure_airport_id} ➡️ ${f.arrival_airport_id}</p>
+                        <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
+                        <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
+                        <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
+                        <button class="btn-select" onclick="selectFlight(${f.id})">🎟️ ЗАБРОНИРОВАТЬ</button>
                     </div>
                 `).join('');
             } catch (e) {
-                notify('Ошибка подключения', 'error');
+                console.error(e);
+                notify('❌ Ошибка подключения', 'error');
             }
         }
 
@@ -366,7 +370,7 @@
             const from = document.getElementById('search-from').value.trim();
             const to = document.getElementById('search-to').value.trim();
             if (!from || !to) {
-                notify('Заполните ОБА поля', 'error');
+                notify('⚠️ Заполните ОБА поля', 'error');
                 return;
             }
             try {
@@ -374,23 +378,24 @@
                 const flights = await res.json();
                 const list = document.getElementById('search-results');
                 if (!flights || flights.length === 0) {
-                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">Рейсы не найдены</div>';
+                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">✈️ Рейсы не найдены</div>';
                     return;
                 }
                 list.innerHTML = flights.map(f => `
                     <div class="card">
                         <h3>${f.flight_number}</h3>
-                        <p><strong>${f.airline}</strong></p>
-                        <p><strong>Маршрут:</strong> ${f.departure_airport_id} → ${f.arrival_airport_id}</p>
-                        <p><strong>Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
-                        <p><strong>Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
-                        <p><strong>Места:</strong> ${f.available_seats}/${f.total_seats}</p>
-                        <button class="btn-select" onclick="selectFlight(${f.id})">BOOK</button>
+                        <p><strong>🎫 ${f.airline}</strong></p>
+                        <p><strong>📍 Маршрут:</strong> ${f.departure_airport_id} ➡️ ${f.arrival_airport_id}</p>
+                        <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
+                        <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
+                        <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
+                        <button class="btn-select" onclick="selectFlight(${f.id})">🎟️ ЗАБРОНИРОВАТЬ</button>
                     </div>
                 `).join('');
-                notify('Найдено ' + flights.length + ' рейсов', 'success');
+                notify(`✅ Найдено ${flights.length} рейсов`, 'success');
             } catch (e) {
-                notify('Ошибка поиска', 'error');
+                console.error(e);
+                notify('❌ Ошибка поиска', 'error');
             }
         }
 
@@ -407,19 +412,20 @@
                 const airports = await res.json();
                 const list = document.getElementById('airports-list');
                 if (!airports || airports.length === 0) {
-                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">Аэропорты не найдены</div>';
+                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">🏢 Аэропорты не найдены</div>';
                     return;
                 }
                 list.innerHTML = airports.map(a => `
                     <div class="card">
-                        <h3>${a.code}</h3>
+                        <h3>✈️ ${a.code}</h3>
                         <p><strong>${a.name}</strong></p>
-                        <p><strong>Город:</strong> ${a.city}</p>
-                        <p><strong>Страна:</strong> ${a.country}</p>
+                        <p><strong>🏙️ Город:</strong> ${a.city}</p>
+                        <p><strong>🌍 Страна:</strong> ${a.country}</p>
                     </div>
                 `).join('');
             } catch (e) {
-                notify('Ошибка подключения', 'error');
+                console.error(e);
+                notify('❌ Ошибка подключения', 'error');
             }
         }
 
@@ -429,7 +435,7 @@
             const city = document.getElementById('airport-city').value.trim();
             const country = document.getElementById('airport-country').value.trim();
             if (!code || !name || !city || !country) {
-                notify('Заполните ВСЕ поля', 'error');
+                notify('⚠️ Заполните ВСЕ поля', 'error');
                 return;
             }
             try {
@@ -439,16 +445,18 @@
                     body: JSON.stringify({ code, name, city, country })
                 });
                 if (res.ok) {
-                    notify('Аэропорт добавлен!', 'success');
+                    notify('✅ Аэропорт добавлен!', 'success');
                     document.getElementById('airport-code').value = '';
                     document.getElementById('airport-name').value = '';
                     document.getElementById('airport-city').value = '';
                     document.getElementById('airport-country').value = '';
+                    setTimeout(() => loadAllAirports(), 500);
                 } else {
-                    notify('Ошибка', 'error');
+                    notify('❌ Ошибка', 'error');
                 }
             } catch (e) {
-                notify('Ошибка подключения', 'error');
+                console.error(e);
+                notify('❌ Ошибка подключения', 'error');
             }
         }
 
@@ -459,20 +467,21 @@
                 const bookings = await res.json();
                 const list = document.getElementById('bookings-list');
                 if (!bookings || bookings.length === 0) {
-                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">Вы еще не бронировали билеты</div>';
+                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">🎫 Вы ещё не бронировали билеты</div>';
                     return;
                 }
                 list.innerHTML = bookings.map(b => `
                     <div class="card">
-                        <h3>№ ${b.booking_number || b.id}</h3>
-                        <p><strong>Пассажир:</strong> ${b.passenger_name}</p>
-                        <p><strong>Email:</strong> ${b.passenger_email}</p>
-                        <p><strong>Телефон:</strong> ${b.passenger_phone}</p>
-                        <p><strong>Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'CONFIRMED'}</span></p>
+                        <h3>🎫 №${b.booking_number || b.id}</h3>
+                        <p><strong>👤 Пассажир:</strong> ${b.passenger_name}</p>
+                        <p><strong>📧 Email:</strong> ${b.passenger_email}</p>
+                        <p><strong>📱 Телефон:</strong> ${b.passenger_phone}</p>
+                        <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'ПОДТВЕРЖДЕНО'}</span></p>
                     </div>
                 `).join('');
             } catch (e) {
-                notify('Ошибка подключения', 'error');
+                console.error(e);
+                // Молча игнорируем ошибку при первой загрузке
             }
         }
 
@@ -482,7 +491,7 @@
             const email = document.getElementById('booking-email').value.trim();
             const phone = document.getElementById('booking-phone').value.trim();
             if (!flight || !name || !email || !phone) {
-                notify('Заполните ВСЕ поля', 'error');
+                notify('⚠️ Заполните ВСЕ поля', 'error');
                 return;
             }
             try {
@@ -498,17 +507,18 @@
                 });
                 if (res.ok) {
                     const booking = await res.json();
-                    notify(`Билет забронирован №${booking.booking_number || flight}!`, 'success');
+                    notify(`✅ Билет забронирован! №${booking.booking_number || flight}`, 'success');
                     document.getElementById('booking-flight').value = '';
                     document.getElementById('booking-name').value = '';
                     document.getElementById('booking-email').value = '';
                     document.getElementById('booking-phone').value = '';
-                    setTimeout(() => loadMyBookings(), 1000);
+                    setTimeout(() => loadMyBookings(), 500);
                 } else {
-                    notify('Ошибка бронирования', 'error');
+                    notify('❌ Ошибка бронирования', 'error');
                 }
             } catch (e) {
-                notify('Ошибка подключения', 'error');
+                console.error(e);
+                notify('❌ Ошибка подключения', 'error');
             }
         }
     </script>
