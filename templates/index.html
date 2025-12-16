@@ -20,11 +20,11 @@
                         <h2>Вход</h2>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" id="login-email" placeholder="demo@example.com">
+                            <input type="email" id="login-email" placeholder="user@example.com">
                         </div>
                         <div class="form-group">
                             <label>Пароль</label>
-                            <input type="password" id="login-password" placeholder="demo123">
+                            <input type="password" id="login-password" placeholder="user123">
                         </div>
                         <button class="btn-auth" onclick="login()">🔓 ВОЙТИ</button>
                         <p class="auth-link">Нет аккаунта? <a onclick="switchAuthForm()">Зарегистрироваться</a></p>
@@ -213,7 +213,7 @@
         const API_URL = 'http://localhost:8000';
         let currentUser = null;
         
-        // ========== КЕШЕ ДАННЫХ В ПАМЯТИ ==========
+        // ========== КЕШЕ ДАННЫХ В ПАМЯТи ==========
         let cachedFlights = [];
         let cachedAirports = [];
         let cachedBookings = [];
@@ -594,7 +594,7 @@
                 const res = await fetch(`${API_URL}/flights/airports`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code, name, city, country })
+                    body: JSON.stringify({ code: code.toUpperCase(), name, city, country })
                 });
                 
                 if (res.ok) {
