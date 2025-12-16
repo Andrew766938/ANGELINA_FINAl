@@ -1,11 +1,12 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Float, ForeignKey
+from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.database import Base
 
 if TYPE_CHECKING:
     from app.models.roles import RoleModel
+    from app.models.booking import BookingModel
 
 
 class UserModel(Base):
@@ -17,3 +18,4 @@ class UserModel(Base):
 
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), nullable=False)
     role: Mapped["RoleModel"] = relationship(back_populates="users")
+    bookings: Mapped[list["BookingModel"]] = relationship(back_populates="user")
