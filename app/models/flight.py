@@ -58,3 +58,4 @@ class FlightModel(Base):
         back_populates="arriving_flights",
         lazy="selectin"
     )
+    bookings = relationship("BookingModel", back_populates="flight", cascade="all, delete-orphan")
