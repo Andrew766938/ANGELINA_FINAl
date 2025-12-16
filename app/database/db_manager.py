@@ -1,3 +1,4 @@
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.database import async_session_maker
 from app.repositories.roles import RolesRepository
 from app.repositories.users import UsersRepository
@@ -21,3 +22,9 @@ class DBManager:
 
     async def commit(self):
         await self.session.commit()
+
+
+async def get_db_session() -> AsyncSession:
+    """Get database session for dependency injection"""
+    async with async_session_maker() as session:
+        yield session
