@@ -107,34 +107,7 @@
             <!-- ============== AIRPORTS TAB ============== -->
             <div id="airports" class="tab">
                 <h2>🏢 Аэропорты</h2>
-                
-                <div class="tabs-container">
-                    <button class="tab-btn active" onclick="switchAirportTab('list')">📋 Список</button>
-                    <button class="tab-btn" onclick="switchAirportTab('add')">➕ Добавить</button>
-                </div>
-
-
-                <!-- Airport List -->
-                <div id="airport-list-tab" class="tab active">
-                    <div id="airports-list" class="cards-grid"></div>
-                </div>
-
-
-                <!-- Add Airport -->
-                <div id="airport-add-tab" class="tab">
-                    <div class="form-card">
-                        <h3>➕ Новый аэропорт</h3>
-                        <div class="form-row">
-                            <input type="text" id="airport-code" placeholder="Код (MOW)" maxlength="3">
-                            <input type="text" id="airport-name" placeholder="Название">
-                        </div>
-                        <div class="form-row">
-                            <input type="text" id="airport-city" placeholder="Город">
-                            <input type="text" id="airport-country" placeholder="Страна">
-                        </div>
-                        <button class="btn-primary" onclick="addAirport()">✅ ДОБАВИТЬ</button>
-                    </div>
-                </div>
+                <div id="airports-list" class="cards-grid"></div>
             </div>
 
 
@@ -158,8 +131,10 @@
                 <div id="booking-new-tab" class="tab">
                     <div class="form-card">
                         <h3>🎟️ Забронировать билет</h3>
-                        <div class="form-row">
-                            <input type="number" id="booking-flight" placeholder="ID рейса" min="1">
+                        <input type="hidden" id="booking-flight">
+                        <div id="selected-flight-info" style="display: none; background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                            <p style="margin: 0; color: #2d3748;"><strong>✈️ Выбранный рейс:</strong> <span id="selected-flight-number">-</span></p>
+                            <p style="margin: 5px 0 0 0; color: #718096;"><strong>Маршрут:</strong> <span id="selected-flight-route">-</span></p>
                         </div>
                         <div class="form-row">
                             <input type="text" id="booking-name" placeholder="ФИО пассажира">
@@ -167,6 +142,7 @@
                         </div>
                         <div class="form-row">
                             <input type="tel" id="booking-phone" placeholder="Номер телефона">
+                            <input type="number" id="booking-seats" placeholder="Кол-во мест" min="1" value="1">
                         </div>
                         <button class="btn-primary" onclick="createBooking()">✅ ЗАБРОНИРОВАТЬ</button>
                     </div>
@@ -215,10 +191,10 @@
         let cachedAirports = [];
         let cachedBookings = [];
 
-        // ========== СОСТОЙАНИЕ ВКЛАДОК ==========
+        // ========== СОСТОЯНИЕ ВКЛАДОК ==========
         let currentFlightTab = 'all';
-        let currentAirportTab = 'list';
         let currentBookingTab = 'list';
+        let selectedFlightForBooking = null;
 
         // ========== DEMO-ДАННЫЕ (FALLBACK) ==========
         const DEMO_FLIGHTS = [
@@ -260,22 +236,22 @@
         ];
 
         const DEMO_BOOKINGS = [
-            { id: 1, booking_number: 'BK-001', passenger_name: 'Иван Петров', passenger_email: 'ivan@example.com', passenger_phone: '+7 999 111-00-01', status: 'ПОДТВЕРЖДЕНО' },
-            { id: 2, booking_number: 'BK-002', passenger_name: 'Мария Сидорова', passenger_email: 'maria@example.com', passenger_phone: '+7 999 222-00-02', status: 'ПОДТВЕРЖДЕНО' },
-            { id: 3, booking_number: 'BK-003', passenger_name: 'Алексей Иванов', passenger_email: 'alex@example.com', passenger_phone: '+7 999 333-00-03', status: 'ЗАВЕРШЕНО' },
-            { id: 4, booking_number: 'BK-004', passenger_name: 'Елена Смирнова', passenger_email: 'elena@example.com', passenger_phone: '+7 999 444-00-04', status: 'ОЖИДАНИЕ' },
-            { id: 5, booking_number: 'BK-005', passenger_name: 'Сергей Федоров', passenger_email: 'sergey@example.com', passenger_phone: '+7 999 555-00-05', status: 'ПОДТВЕРЖДЕНО' },
-            { id: 6, booking_number: 'BK-006', passenger_name: 'Ольга Новикова', passenger_email: 'olga@example.com', passenger_phone: '+7 999 666-00-06', status: 'ПОДТВЕРЖДЕНО' },
-            { id: 7, booking_number: 'BK-007', passenger_name: 'Виктор Козлов', passenger_email: 'victor@example.com', passenger_phone: '+7 999 777-00-07', status: 'ЗАВЕРШЕНО' },
-            { id: 8, booking_number: 'BK-008', passenger_name: 'Екатерина Волкова', passenger_email: 'kate@example.com', passenger_phone: '+7 999 888-00-08', status: 'ПОДТВЕРЖДЕНО' },
-            { id: 9, booking_number: 'BK-009', passenger_name: 'Максим Соколов', passenger_email: 'max@example.com', passenger_phone: '+7 999 900-00-09', status: 'ОЖИДАНИЕ' },
-            { id: 10, booking_number: 'BK-010', passenger_name: 'Наталья Степанова', passenger_email: 'nata@example.com', passenger_phone: '+7 999 101-00-10', status: 'ПОДТВЕРЖДЕНО' },
-            { id: 11, booking_number: 'BK-011', passenger_name: 'Павел Морозов', passenger_email: 'pavel@example.com', passenger_phone: '+7 999 202-00-11', status: 'ЗАВЕРШЕНО' },
-            { id: 12, booking_number: 'BK-012', passenger_name: 'Анна Буланова', passenger_email: 'anna@example.com', passenger_phone: '+7 999 303-00-12', status: 'ПОДТВЕРЖДЕНО' },
-            { id: 13, booking_number: 'BK-013', passenger_name: 'Дмитрий Петров', passenger_email: 'dmitry@example.com', passenger_phone: '+7 999 404-00-13', status: 'ОЖИДАНИЕ' },
-            { id: 14, booking_number: 'BK-014', passenger_name: 'Валентина Соловьева', passenger_email: 'val@example.com', passenger_phone: '+7 999 505-00-14', status: 'ПОДТВЕРЖДЕНО' },
-            { id: 15, booking_number: 'BK-015', passenger_name: 'Руслан Кузнецов', passenger_email: 'ruslan@example.com', passenger_phone: '+7 999 606-00-15', status: 'ЗАВЕРШЕНО' },
-            { id: 16, booking_number: 'BK-016', passenger_name: 'Людмила Волохова', passenger_email: 'lyuda@example.com', passenger_phone: '+7 999 707-00-16', status: 'ПОДТВЕРЖДЕНО' },
+            { id: 1, booking_number: 'BK-001', passenger_name: 'Иван Петров', passenger_email: 'ivan@example.com', passenger_phone: '+7 999 111-00-01', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
+            { id: 2, booking_number: 'BK-002', passenger_name: 'Мария Сидорова', passenger_email: 'maria@example.com', passenger_phone: '+7 999 222-00-02', seats_count: 2, status: 'ПОДТВЕРЖДЕНО' },
+            { id: 3, booking_number: 'BK-003', passenger_name: 'Алексей Иванов', passenger_email: 'alex@example.com', passenger_phone: '+7 999 333-00-03', seats_count: 1, status: 'ЗАВЕРШЕНО' },
+            { id: 4, booking_number: 'BK-004', passenger_name: 'Елена Смирнова', passenger_email: 'elena@example.com', passenger_phone: '+7 999 444-00-04', seats_count: 1, status: 'ОЖИДАНИЕ' },
+            { id: 5, booking_number: 'BK-005', passenger_name: 'Сергей Федоров', passenger_email: 'sergey@example.com', passenger_phone: '+7 999 555-00-05', seats_count: 3, status: 'ПОДТВЕРЖДЕНО' },
+            { id: 6, booking_number: 'BK-006', passenger_name: 'Ольга Новикова', passenger_email: 'olga@example.com', passenger_phone: '+7 999 666-00-06', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
+            { id: 7, booking_number: 'BK-007', passenger_name: 'Виктор Козлов', passenger_email: 'victor@example.com', passenger_phone: '+7 999 777-00-07', seats_count: 2, status: 'ЗАВЕРШЕНО' },
+            { id: 8, booking_number: 'BK-008', passenger_name: 'Екатерина Волкова', passenger_email: 'kate@example.com', passenger_phone: '+7 999 888-00-08', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
+            { id: 9, booking_number: 'BK-009', passenger_name: 'Максим Соколов', passenger_email: 'max@example.com', passenger_phone: '+7 999 900-00-09', seats_count: 4, status: 'ОЖИДАНИЕ' },
+            { id: 10, booking_number: 'BK-010', passenger_name: 'Наталья Степанова', passenger_email: 'nata@example.com', passenger_phone: '+7 999 101-00-10', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
+            { id: 11, booking_number: 'BK-011', passenger_name: 'Павел Морозов', passenger_email: 'pavel@example.com', passenger_phone: '+7 999 202-00-11', seats_count: 2, status: 'ЗАВЕРШЕНО' },
+            { id: 12, booking_number: 'BK-012', passenger_name: 'Анна Буланова', passenger_email: 'anna@example.com', passenger_phone: '+7 999 303-00-12', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
+            { id: 13, booking_number: 'BK-013', passenger_name: 'Дмитрий Петров', passenger_email: 'dmitry@example.com', passenger_phone: '+7 999 404-00-13', seats_count: 3, status: 'ОЖИДАНИЕ' },
+            { id: 14, booking_number: 'BK-014', passenger_name: 'Валентина Соловьева', passenger_email: 'val@example.com', passenger_phone: '+7 999 505-00-14', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
+            { id: 15, booking_number: 'BK-015', passenger_name: 'Руслан Кузнецов', passenger_email: 'ruslan@example.com', passenger_phone: '+7 999 606-00-15', seats_count: 2, status: 'ЗАВЕРШЕНО' },
+            { id: 16, booking_number: 'BK-016', passenger_name: 'Людмила Волохова', passenger_email: 'lyuda@example.com', passenger_phone: '+7 999 707-00-16', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
         ];
 
 
@@ -375,7 +351,7 @@
             document.getElementById('app').classList.remove('hidden');
             updateAccountTab();
             
-            // ЗАГРУжаем ВСЕ данные и кешируем
+            // ЗАГРУЖаем ВСЕ данные и кешируем
             await loadAllFlights();
             await loadAllAirports();
             await loadMyBookings();
@@ -395,11 +371,9 @@
                 btns[idx].classList.add('active');
             }
             
-            // Восстанавливаем состояние вкладок для каждой вкладки
+            // Восстанавливаем состояние вкладок
             if (tabName === 'flights') {
                 switchFlightTab(currentFlightTab);
-            } else if (tabName === 'airports') {
-                switchAirportTab(currentAirportTab);
             } else if (tabName === 'bookings') {
                 switchBookingTab(currentBookingTab);
             }
@@ -407,7 +381,7 @@
 
 
         function switchFlightTab(tab) {
-            currentFlightTab = tab; // Сохраняем новое состояние
+            currentFlightTab = tab;
             document.getElementById('all-flights-tab').classList.toggle('active', tab === 'all');
             document.getElementById('search-flights-tab').classList.toggle('active', tab === 'search');
             document.querySelectorAll('#flights .tab-btn').forEach((b, i) => {
@@ -416,18 +390,8 @@
         }
 
 
-        function switchAirportTab(tab) {
-            currentAirportTab = tab; // Сохраняем новое состояние
-            document.getElementById('airport-list-tab').classList.toggle('active', tab === 'list');
-            document.getElementById('airport-add-tab').classList.toggle('active', tab === 'add');
-            document.querySelectorAll('#airports .tab-btn').forEach((b, i) => {
-                b.classList.toggle('active', (i === 0 && tab === 'list') || (i === 1 && tab === 'add'));
-            });
-        }
-
-
         function switchBookingTab(tab) {
-            currentBookingTab = tab; // Сохраняем новое состояние
+            currentBookingTab = tab;
             document.getElementById('booking-list-tab').classList.toggle('active', tab === 'list');
             document.getElementById('booking-new-tab').classList.toggle('active', tab === 'new');
             document.querySelectorAll('#bookings .tab-btn').forEach((b, i) => {
@@ -486,7 +450,7 @@
                     <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
                     <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
                     <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
-                    <button class="btn-select" onclick="selectFlight(${f.id})">🎟️ ЗАБРОНИРОВАТЬ</button>
+                    <button class="btn-select" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id})">🎟️ ЗАБРОНИРОВАТЬ</button>
                 </div>
             `).join('');
         }
@@ -516,7 +480,7 @@
                         <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
                         <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
                         <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
-                        <button class="btn-select" onclick="selectFlight(${f.id})">🎟️ ЗАБРОНИРОВАТЬ</button>
+                        <button class="btn-select" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id})">🎟️ ЗАБРОНИРОВАТЬ</button>
                     </div>
                 `).join('');
                 notify(`✅ Найдено ${flights.length} рейсов`, 'success');
@@ -527,8 +491,12 @@
         }
 
 
-        function selectFlight(id) {
+        function selectFlight(id, flightNumber, fromId, toId) {
+            selectedFlightForBooking = { id, flightNumber, fromId, toId };
             document.getElementById('booking-flight').value = id;
+            document.getElementById('selected-flight-number').textContent = flightNumber;
+            document.getElementById('selected-flight-route').textContent = `${fromId} ➡️ ${toId}`;
+            document.getElementById('selected-flight-info').style.display = 'block';
             switchMainTab('bookings');
             switchBookingTab('new');
         }
@@ -546,7 +514,7 @@
                     cachedAirports = DEMO_AIRPORTS;
                 }
             } catch (e) {
-                console.error('Ошибка загружи аэропортов, используем DEMO:', e);
+                console.error('Ошибка загрузки аэропортов, используем DEMO:', e);
                 cachedAirports = DEMO_AIRPORTS;
             }
             renderAirports();
@@ -569,38 +537,6 @@
         }
 
 
-        async function addAirport() {
-            const code = document.getElementById('airport-code').value.trim().toUpperCase();
-            const name = document.getElementById('airport-name').value.trim();
-            const city = document.getElementById('airport-city').value.trim();
-            const country = document.getElementById('airport-country').value.trim();
-            if (!code || !name || !city || !country) {
-                notify('⚠️ Заполните ВСЕ поля', 'error');
-                return;
-            }
-            try {
-                const res = await fetch(`${API_URL}/flights/airports`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code, name, city, country })
-                });
-                if (res.ok) {
-                    notify('✅ Аэропорт добавлен!', 'success');
-                    document.getElementById('airport-code').value = '';
-                    document.getElementById('airport-name').value = '';
-                    document.getElementById('airport-city').value = '';
-                    document.getElementById('airport-country').value = '';
-                    await loadAllAirports();
-                } else {
-                    notify('❌ Ошибка', 'error');
-                }
-            } catch (e) {
-                console.error(e);
-                notify('❌ Ошибка подключения', 'error');
-            }
-        }
-
-
         // ============== BOOKINGS ==============
         async function loadMyBookings() {
             try {
@@ -613,7 +549,7 @@
                     cachedBookings = DEMO_BOOKINGS;
                 }
             } catch (e) {
-                console.error('Ошибка загружи билетов, используем DEMO:', e);
+                console.error('Ошибка загрузки билетов, используем DEMO:', e);
                 cachedBookings = DEMO_BOOKINGS;
             }
             renderBookings();
@@ -631,6 +567,7 @@
                     <p><strong>👤 Пассажир:</strong> ${b.passenger_name}</p>
                     <p><strong>📧 Email:</strong> ${b.passenger_email}</p>
                     <p><strong>📱 Телефон:</strong> ${b.passenger_phone}</p>
+                    <p><strong>💺 Мест:</strong> ${b.seats_count || 1}</p>
                     <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'ПОДТВЕРЖДЕНО'}</span></p>
                 </div>
             `).join('');
@@ -642,7 +579,13 @@
             const name = document.getElementById('booking-name').value.trim();
             const email = document.getElementById('booking-email').value.trim();
             const phone = document.getElementById('booking-phone').value.trim();
-            if (!flight || !name || !email || !phone) {
+            const seats = document.getElementById('booking-seats').value.trim() || '1';
+            
+            if (!flight) {
+                notify('⚠️ Сначала выберите рейс', 'error');
+                return;
+            }
+            if (!name || !email || !phone) {
                 notify('⚠️ Заполните ВСЕ поля', 'error');
                 return;
             }
@@ -654,7 +597,8 @@
                         flight_id: parseInt(flight),
                         passenger_name: name,
                         passenger_email: email,
-                        passenger_phone: phone
+                        passenger_phone: phone,
+                        seats_count: parseInt(seats)
                     })
                 });
                 if (res.ok) {
@@ -664,9 +608,14 @@
                     document.getElementById('booking-name').value = '';
                     document.getElementById('booking-email').value = '';
                     document.getElementById('booking-phone').value = '';
+                    document.getElementById('booking-seats').value = '1';
+                    document.getElementById('selected-flight-info').style.display = 'none';
+                    selectedFlightForBooking = null;
                     await loadMyBookings();
+                    switchBookingTab('list');
                 } else {
-                    notify('❌ Ошибка бронирования', 'error');
+                    const err = await res.json();
+                    notify(`❌ ${err.detail || 'Ошибка бронирования'}`, 'error');
                 }
             } catch (e) {
                 console.error(e);
