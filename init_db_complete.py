@@ -18,7 +18,9 @@ async def init_db():
     
     # Create all tables
     async with engine.begin() as conn:
+        print("🔧 Creating tables...")
         await conn.run_sync(Base.metadata.create_all)
+        print("✅ Tables created")
     
     async_session = sessionmaker(
         engine, class_=AsyncSession, expire_on_commit=False
@@ -36,13 +38,35 @@ async def init_db():
         except:
             pass
         
-        # Create roles
+        print("\n📝 Creating roles...")
+        # CREATE ROLES FIRST
         user_role = RoleModel(name="user")
         admin_role = RoleModel(name="admin")
         session.add(user_role)
         session.add(admin_role)
         await session.flush()
+        print(f"✅ Roles created: user_role.id={user_role.id}, admin_role.id={admin_role.id}")
         
+        print("\n👤 Creating demo users...")
+        # CREATE USERS SECOND (after roles)
+        demo_user = UserModel(
+            name="Демо Пользователь",
+            email="demo@example.com",
+            hashed_password="demo123",
+            role_id=user_role.id
+        )
+        demo_admin = UserModel(
+            name="Админ",
+            email="admin@example.com",
+            hashed_password="admin123",
+            role_id=admin_role.id
+        )
+        session.add(demo_user)
+        session.add(demo_admin)
+        await session.flush()
+        print(f"✅ Users created: demo_user.id={demo_user.id}, demo_admin.id={demo_admin.id}")
+        
+        print("\n✈️ Creating airports...")
         # Create 16 airports
         airports = [
             AirportModel(code="MOW", name="Шереметьево", city="Москва", country="Россия"),
@@ -65,7 +89,9 @@ async def init_db():
         
         session.add_all(airports)
         await session.flush()
+        print(f"✅ {len(airports)} airports created")
         
+        print("\n🛫 Creating flights...")
         # Create 16 flights
         base_time = datetime.now() + timedelta(days=1)
         flights = [
@@ -89,15 +115,10 @@ async def init_db():
         
         session.add_all(flights)
         await session.flush()
+        print(f"✅ {len(flights)} flights created")
         
-        # Create demo users (user and admin)
-        demo_user = UserModel(name="Демо Пользователь", email="demo@example.com", hashed_password="demo123", role_id=user_role.id)
-        demo_admin = UserModel(name="Админ", email="admin@example.com", hashed_password="admin123", role_id=admin_role.id)
-        session.add(demo_user)
-        session.add(demo_admin)
-        await session.flush()
-        
-        # Create 16 bookings (tickets)
+        print("\n🎫 Creating bookings...")
+        # Create 16 bookings (tickets) using demo_user that was already created
         bookings = [
             BookingModel(booking_number="BK-001", user_id=demo_user.id, flight_id=1, passenger_name="Иван Петров", passenger_email="ivan@example.com", passenger_phone="+7-999-111-0001", seats_count=1, total_price=5500, status=BookingStatus.CONFIRMED),
             BookingModel(booking_number="BK-002", user_id=demo_user.id, flight_id=2, passenger_name="Мария Сидорова", passenger_email="maria@example.com", passenger_phone="+7-999-222-0002", seats_count=2, total_price=11000, status=BookingStatus.CONFIRMED),
@@ -118,19 +139,29 @@ async def init_db():
         ]
         
         session.add_all(bookings)
-        await session.commit()
+        await session.flush()
+        print(f"✅ {len(bookings)} bookings created")
         
-        print("✅ Database initialized!")
-        print(f"  - 16 airports created")
-        print(f"  - 16 flights created")
-        print(f"  - 16 bookings (tickets) created")
-        print(f"  - Demo user created (demo@example.com / demo123)")
-        print(f"  - Demo admin created (admin@example.com / admin123)")
+        # FINAL COMMIT
+        await session.commit()
+        print("\n💾 All data committed!")
+        
+        print("\n" + "="*60)
+        print("✅ DATABASE INITIALIZATION COMPLETED!")
+        print("="*60)
+        print(f"📊 Summary:")
+        print(f"   - Roles: 2 (user, admin)")
+        print(f"   - Users: 2 (demo@example.com, admin@example.com)")
+        print(f"   - Airports: {len(airports)}")
+        print(f"   - Flights: {len(flights)}")
+        print(f"   - Bookings: {len(bookings)}")
+        print(f"   - Demo user ID: {demo_user.id}")
+        print("="*60)
     
     await engine.dispose()
 
 
 if __name__ == "__main__":
-    print("🚀 Initializing database with complete data...")
+    print("\n🚀 Starting database initialization...\n")
     asyncio.run(init_db())
-    print("✅ Done!")
+    print("\n✅ Done! You can now run: python main.py\n")
