@@ -4,14 +4,14 @@ from app.models.booking import BookingStatus
 
 
 class BookingBase(BaseModel):
-    passenger_name: str = Field(..., min_length=1, max_length=100)
-    passenger_email: str = Field(..., min_length=1, max_length=100)
-    passenger_phone: str = Field(..., min_length=1, max_length=20)
-    seats_count: int = Field(..., gt=0)
+    passenger_name: str = Field(..., min_length=1, max_length=150)
+    passenger_email: str = Field(..., min_length=1, max_length=150)
+    passenger_phone: str = Field(..., min_length=1, max_length=50)  # Increased from 20 to 50
+    seats_count: int = Field(..., gt=0, le=9)  # Max 9 seats per booking
 
 
 class BookingCreate(BookingBase):
-    flight_id: int
+    flight_id: int = Field(..., gt=0)
 
 
 class BookingUpdate(BaseModel):
