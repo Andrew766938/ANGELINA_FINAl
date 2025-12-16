@@ -46,8 +46,7 @@ class FlightRepository:
     async def create_flight(self, flight_data: dict) -> FlightModel:
         flight = FlightModel(**flight_data)
         self.db_session.add(flight)
-        await self.db_session.commit()
-        await self.db_session.refresh(flight)
+        await self.db_session.flush()
         return flight
 
     async def update_flight(self, flight_id: int, flight_data: dict) -> FlightModel | None:
@@ -56,15 +55,13 @@ class FlightRepository:
             for key, value in flight_data.items():
                 if value is not None:
                     setattr(flight, key, value)
-            await self.db_session.commit()
-            await self.db_session.refresh(flight)
+            await self.db_session.flush()
         return flight
 
     async def delete_flight(self, flight_id: int) -> bool:
         flight = await self.get_flight_by_id(flight_id)
         if flight:
             await self.db_session.delete(flight)
-            await self.db_session.commit()
             return True
         return False
 
@@ -81,7 +78,7 @@ class AirportRepository:
 
     async def get_airport_by_code(self, code: str) -> AirportModel | None:
         result = await self.db_session.execute(
-            select(AirportModel).where(AirportModel.code == code)
+            select(AirportModel).where(AirportModel.code == code.upper())
         )
         return result.scalars().first()
 
@@ -90,10 +87,12 @@ class AirportRepository:
         return result.scalars().all()
 
     async def create_airport(self, airport_data: dict) -> AirportModel:
+        # Normalize code to uppercase
+        if 'code' in airport_data:
+            airport_data['code'] = airport_data['code'].upper()
         airport = AirportModel(**airport_data)
         self.db_session.add(airport)
-        await self.db_session.commit()
-        await self.db_session.refresh(airport)
+        await self.db_session.flush()
         return airport
 
     async def update_airport(self, airport_id: int, airport_data: dict) -> AirportModel | None:
@@ -102,14 +101,12 @@ class AirportRepository:
             for key, value in airport_data.items():
                 if value is not None:
                     setattr(airport, key, value)
-            await self.db_session.commit()
-            await self.db_session.refresh(airport)
+            await self.db_session.flush()
         return airport
 
     async def delete_airport(self, airport_id: int) -> bool:
         airport = await self.get_airport_by_id(airport_id)
         if airport:
             await self.db_session.delete(airport)
-            await self.db_session.commit()
             return True
         return False
