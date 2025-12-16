@@ -271,11 +271,20 @@
 
         // ============== INIT ==============
         document.addEventListener('DOMContentLoaded', () => {
+            clearAuthFields();
             showAuthModal();
         });
 
 
         // ============== AUTH ==============
+        function clearAuthFields() {
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('register-name').value = '';
+            document.getElementById('register-email').value = '';
+            document.getElementById('register-password').value = '';
+        }
+
         function switchAuthForm() {
             document.getElementById('login-form').classList.toggle('active');
             document.getElementById('register-form').classList.toggle('active');
@@ -327,6 +336,7 @@
             cachedFlights = [];
             cachedAirports = [];
             cachedBookings = [];
+            clearAuthFields();
             showAuthModal();
             notify('✅ Вы вышли из аккаунта', 'success');
         }
@@ -564,14 +574,21 @@
                 list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">🏢 Аэропорты не найдены</div>';
                 return;
             }
-            list.innerHTML = cachedAirports.map(a => `
-                <div class="card">
-                    <h3>✈️ ${a.code}</h3>
-                    <p><strong>${a.name}</strong></p>
-                    <p><strong>🏙️ Город:</strong> ${a.city}</p>
-                    <p><strong>🌍 Страна:</strong> ${a.country}</p>
-                </div>
-            `).join('');
+            list.innerHTML = cachedAirports.map(a => {
+                let deleteBtn = '';
+                if (currentUser.role === 'admin') {
+                    deleteBtn = `<button class="btn-delete" onclick="deleteAirport(${a.id}, '${a.code}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>`;
+                }
+                return `
+                    <div class="card">
+                        <h3>✈️ ${a.code}</h3>
+                        <p><strong>${a.name}</strong></p>
+                        <p><strong>🏙️ Город:</strong> ${a.city}</p>
+                        <p><strong>🌍 Страна:</strong> ${a.country}</p>
+                        ${deleteBtn}
+                    </div>
+                `;
+            }).join('');
         }
 
         async function createAirport() {
@@ -608,6 +625,35 @@
                 } else {
                     const err = await res.json();
                     notify(`❌ ${err.detail || 'Ошибка создания'}`, 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                notify('❌ Ошибка подключения', 'error');
+            }
+        }
+
+        async function deleteAirport(airportId, airportCode) {
+            if (currentUser.role !== 'admin') {
+                notify('⚠️ Только администраторы могут удалять аэропорты', 'error');
+                return;
+            }
+            
+            if (!confirm(`Вы уверены? Удалить аэропорт ${airportCode}?`)) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/flights/airports/${airportId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (res.ok) {
+                    notify(`✅ Аэропорт ${airportCode} удален!`, 'success');
+                    await loadAllAirports();
+                } else {
+                    const err = await res.json();
+                    notify(`❌ ${err.detail || 'Ошибка удаления'}`, 'error');
                 }
             } catch (e) {
                 console.error(e);
