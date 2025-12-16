@@ -20,11 +20,11 @@
                         <h2>Вход</h2>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" id="login-email" placeholder="user@example.com">
+                            <input type="email" id="login-email" placeholder="user@example.com" autocomplete="off" value="">
                         </div>
                         <div class="form-group">
                             <label>Пароль</label>
-                            <input type="password" id="login-password" placeholder="user123">
+                            <input type="password" id="login-password" placeholder="user123" autocomplete="off" value="">
                         </div>
                         <button class="btn-auth" onclick="login()">🔓 ВОЙТИ</button>
                         <p class="auth-link">Нет аккаунта? <a onclick="switchAuthForm()">Зарегистрироваться</a></p>
@@ -50,15 +50,15 @@
                         <h2>Регистрация</h2>
                         <div class="form-group">
                             <label>ФИО</label>
-                            <input type="text" id="register-name" placeholder="Иван Иванов">
+                            <input type="text" id="register-name" placeholder="Иван Иванов" autocomplete="off" value="">
                         </div>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" id="register-email" placeholder="your@email.com">
+                            <input type="email" id="register-email" placeholder="your@email.com" autocomplete="off" value="">
                         </div>
                         <div class="form-group">
                             <label>Пароль</label>
-                            <input type="password" id="register-password" placeholder="Минимум 6 символов">
+                            <input type="password" id="register-password" placeholder="Минимум 6 символов" autocomplete="off" value="">
                         </div>
                         <div class="form-group">
                             <label>Роль</label>
@@ -267,18 +267,21 @@
 
 
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('[DOMContentLoaded] Clearing all auth fields');
             clearAllAuthFields();
             showAuthModal();
         });
 
 
         function clearAllAuthFields() {
+            console.log('[clearAllAuthFields] Clearing login-email, login-password, register fields');
             document.getElementById('login-email').value = '';
             document.getElementById('login-password').value = '';
             document.getElementById('register-name').value = '';
             document.getElementById('register-email').value = '';
             document.getElementById('register-password').value = '';
             document.getElementById('register-role').value = 'user';
+            console.log('[clearAllAuthFields] All fields cleared');
         }
 
         function switchAuthForm() {
@@ -333,6 +336,7 @@
 
 
         function logout() {
+            console.log('[logout] Logging out user');
             currentUser = null;
             cachedFlights = [];
             cachedAirports = [];
