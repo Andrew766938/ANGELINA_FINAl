@@ -30,7 +30,7 @@ if static_dir.exists():
 # Маршрут для главной страницы
 @app.get("/")
 async def read_root():
-    index_path = Path(__file__).parent / "static" / "index.html"
+    index_path = Path(__file__).parent / "templates" / "index.html"
     if index_path.exists():
         return FileResponse(index_path)
     return {"message": "Крылья онлайн - Добро пожаловать!"}
