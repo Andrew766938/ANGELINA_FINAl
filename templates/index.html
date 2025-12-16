@@ -210,10 +210,15 @@
         const API_URL = 'http://localhost:8000';
         let currentUser = null;
         
-        // ========== КЕШЕ В ПАМЯТИ ==========
+        // ========== КЕШЕ ДАННЫХ В ПАМЯТИ ==========
         let cachedFlights = [];
         let cachedAirports = [];
         let cachedBookings = [];
+
+        // ========== СОСТОЙАНИЕ ВКЛАДОК ==========
+        let currentFlightTab = 'all';
+        let currentAirportTab = 'list';
+        let currentBookingTab = 'list';
 
         // ========== DEMO-ДАННЫЕ (FALLBACK) ==========
         const DEMO_FLIGHTS = [
@@ -370,7 +375,7 @@
             document.getElementById('app').classList.remove('hidden');
             updateAccountTab();
             
-            // ЗАГРУЖАЕМ ВСЕ ДАННЫЕ И КЕШИРУЕМ
+            // ЗАГРУжаем ВСЕ данные и кешируем
             await loadAllFlights();
             await loadAllAirports();
             await loadMyBookings();
@@ -389,10 +394,20 @@
             if (idx !== undefined && btns[idx]) {
                 btns[idx].classList.add('active');
             }
+            
+            // Восстанавливаем состояние вкладок для каждой вкладки
+            if (tabName === 'flights') {
+                switchFlightTab(currentFlightTab);
+            } else if (tabName === 'airports') {
+                switchAirportTab(currentAirportTab);
+            } else if (tabName === 'bookings') {
+                switchBookingTab(currentBookingTab);
+            }
         }
 
 
         function switchFlightTab(tab) {
+            currentFlightTab = tab; // Сохраняем новое состояние
             document.getElementById('all-flights-tab').classList.toggle('active', tab === 'all');
             document.getElementById('search-flights-tab').classList.toggle('active', tab === 'search');
             document.querySelectorAll('#flights .tab-btn').forEach((b, i) => {
@@ -402,6 +417,7 @@
 
 
         function switchAirportTab(tab) {
+            currentAirportTab = tab; // Сохраняем новое состояние
             document.getElementById('airport-list-tab').classList.toggle('active', tab === 'list');
             document.getElementById('airport-add-tab').classList.toggle('active', tab === 'add');
             document.querySelectorAll('#airports .tab-btn').forEach((b, i) => {
@@ -411,6 +427,7 @@
 
 
         function switchBookingTab(tab) {
+            currentBookingTab = tab; // Сохраняем новое состояние
             document.getElementById('booking-list-tab').classList.toggle('active', tab === 'list');
             document.getElementById('booking-new-tab').classList.toggle('active', tab === 'new');
             document.querySelectorAll('#bookings .tab-btn').forEach((b, i) => {
@@ -529,7 +546,7 @@
                     cachedAirports = DEMO_AIRPORTS;
                 }
             } catch (e) {
-                console.error('Ошибка загрузки аэропортов, используем DEMO:', e);
+                console.error('Ошибка загружи аэропортов, используем DEMO:', e);
                 cachedAirports = DEMO_AIRPORTS;
             }
             renderAirports();
@@ -596,7 +613,7 @@
                     cachedBookings = DEMO_BOOKINGS;
                 }
             } catch (e) {
-                console.error('Ошибка загрузки билетов, используем DEMO:', e);
+                console.error('Ошибка загружи билетов, используем DEMO:', e);
                 cachedBookings = DEMO_BOOKINGS;
             }
             renderBookings();
