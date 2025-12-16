@@ -204,7 +204,7 @@
         const API_URL = 'http://localhost:8000';
         let currentUser = null;
         
-        // ========== КЕШЕ ДАННЫХ В ПАМЯТИ ==========
+        // ========== КЕШЕ ДАННЫХ В ПАМЯТи ==========
         let cachedFlights = [];
         let cachedAirports = [];
         let cachedBookings = [];
@@ -608,7 +608,6 @@
                     document.getElementById('airport-name').value = '';
                     document.getElementById('airport-city').value = '';
                     document.getElementById('airport-country').value = '';
-                    // Очистим кэш и загружаем снова - теперь все аэропорты видны
                     cachedAirports = [];
                     await loadAllAirports();
                 } else {
@@ -654,8 +653,33 @@
                     <p><strong>📱 Телефон:</strong> ${b.passenger_phone}</p>
                     <p><strong>💺 Мест:</strong> ${b.seats_count || 1}</p>
                     <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'pending'}</span></p>
+                    <button class="btn-delete" onclick="deleteBooking(${b.id}, '${b.booking_number || b.id}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>
                 </div>
             `).join('');
+        }
+
+        async function deleteBooking(bookingId, bookingNumber) {
+            if (!confirm(`Вы уверены? Удалить билет ${bookingNumber}?`)) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/bookings/${bookingId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (res.ok) {
+                    notify(`✅ Билет ${bookingNumber} удален!`, 'success');
+                    await loadMyBookings();
+                } else {
+                    const err = await res.json();
+                    notify(`❌ ${err.detail || 'Ошибка удаления'}`, 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                notify('❌ Ошибка подключения', 'error');
+            }
         }
     </script>
 </body>
