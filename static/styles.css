@@ -17,7 +17,134 @@ body {
     padding: 20px;
 }
 
-/* Навигация */
+/* ============== АВТОРИЗАЦИЯ ==============  */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.show-auth {
+    display: flex;
+}
+
+.auth-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-box {
+    background: white;
+    border-radius: 20px;
+    padding: 50px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s ease;
+}
+
+.logo-auth {
+    text-align: center;
+    color: #667eea;
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+.auth-form h2 {
+    color: #333;
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.auth-form .form-group {
+    margin-bottom: 18px;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.auth-form .btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    color: #999;
+    font-size: 14px;
+}
+
+.auth-switch a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+.demo-login {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.demo-login p {
+    color: #999;
+    margin-bottom: 15px;
+}
+
+.demo-login .btn {
+    width: 100%;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ============== ГЛАВНОЕ ПРИЛОЖЕНИЕ ==============  */
 .navbar {
     background: white;
     border-radius: 15px;
@@ -76,7 +203,19 @@ body {
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
-/* Маиновое содержание */
+.btn-outline {
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    padding: 10px 20px;
+}
+
+.btn-outline:hover {
+    background: #667eea;
+    color: white;
+}
+
+/* Основное содержание */
 .main-content {
     background: white;
     border-radius: 15px;
@@ -130,6 +269,7 @@ h3 {
 .form-group {
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .form-group label {
@@ -160,6 +300,50 @@ h3 {
     color: #bbb;
 }
 
+/* Автокомплит списки */
+.airports-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    z-index: 100;
+    margin-top: 2px;
+}
+
+.airports-list.show {
+    display: block;
+}
+
+.airport-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+}
+
+.airport-item:hover {
+    background: #f8f9fa;
+    color: #667eea;
+}
+
+.airport-item-code {
+    font-weight: 700;
+    color: #667eea;
+}
+
+.airport-item-name {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+}
+
 /* Кнопки */
 .btn {
     padding: 12px 30px;
@@ -187,6 +371,7 @@ h3 {
 .btn-success {
     background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     color: white;
+    width: 100%;
 }
 
 .btn-success:hover {
@@ -197,6 +382,7 @@ h3 {
 .btn-info {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+    width: 100%;
 }
 
 .btn-info:hover {
@@ -209,6 +395,7 @@ h3 {
     color: white;
     padding: 8px 16px;
     font-size: 12px;
+    width: auto;
 }
 
 .btn-danger:hover {
@@ -251,7 +438,7 @@ h3 {
     margin-top: 20px;
 }
 
-/* Карточки рейсов */
+/* Карточки */
 .flight-card,
 .booking-card {
     background: white;
@@ -268,98 +455,77 @@ h3 {
     transform: translateY(-5px);
 }
 
-.flight-card h4 {
-    color: #667eea;
-    margin-bottom: 12px;
-    font-size: 16px;
-}
-
-.flight-info {
+.flight-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 15px;
+}
+
+.flight-header h3 {
+    color: #667eea;
+    margin: 0;
+    font-size: 16px;
+}
+
+.airline {
+    background: #f0f0f0;
+    color: #666;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.flight-info {
     margin: 15px 0;
     padding: 12px 0;
     border-bottom: 1px solid #f0f0f0;
 }
 
-.flight-info-item {
-    display: flex;
-    flex-direction: column;
-}
-
-.flight-info-label {
-    font-size: 12px;
-    color: #999;
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-}
-
-.flight-info-value {
-    font-size: 16px;
-    color: #333;
-    font-weight: 700;
-}
-
-.flight-route {
+.flight-info p {
+    margin: 6px 0;
     font-size: 14px;
     color: #666;
-    margin: 15px 0;
 }
 
-.flight-airport {
-    font-weight: 700;
+.route {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 12px 0;
+    font-weight: 600;
+}
+
+.arrow {
+    margin: 0 10px;
     color: #667eea;
-}
-
-.flight-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin: 15px 0;
-}
-
-.detail-item {
-    background: #f8f9fa;
-    padding: 12px;
-    border-radius: 8px;
-    text-align: center;
-}
-
-.detail-label {
-    font-size: 11px;
-    color: #999;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.detail-value {
     font-size: 18px;
-    color: #333;
-    font-weight: 700;
 }
 
-.price-badge {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: 700;
-    text-align: center;
-    margin-top: 12px;
+.times {
+    margin: 12px 0;
 }
 
-.seats-badge {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-weight: 600;
+.times p {
+    margin: 8px 0;
     font-size: 13px;
 }
 
+.availability {
+    margin: 12px 0;
+}
+
+.availability p {
+    margin: 6px 0;
+}
+
+.availability strong {
+    color: #667eea;
+    font-size: 15px;
+}
+
+/* Статус бейджи */
 .status-badge {
     display: inline-block;
     padding: 6px 12px;
@@ -383,7 +549,7 @@ h3 {
     color: #721c24;
 }
 
-/* Нотификации */
+/* Пустое состояние */
 .empty-state {
     text-align: center;
     color: #999;
@@ -391,6 +557,7 @@ h3 {
     font-size: 16px;
 }
 
+/* Нотификации */
 .notification {
     position: fixed;
     top: 20px;
@@ -400,24 +567,23 @@ h3 {
     color: white;
     font-weight: 600;
     display: none;
-    z-index: 1000;
+    z-index: 2000;
     animation: slideIn 0.3s ease;
     max-width: 400px;
 }
 
-.notification.show {
+.notification.show-success {
     display: block;
-}
-
-.notification.success {
     background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
 }
 
-.notification.error {
+.notification.show-error {
+    display: block;
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
-.notification.info {
+.notification.show-info {
+    display: block;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
@@ -434,7 +600,6 @@ h3 {
 
 /* Модальное окно */
 .modal {
-    display: none;
     position: fixed;
     z-index: 999;
     left: 0;
@@ -442,16 +607,17 @@ h3 {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
-    animation: fadeIn 0.3s ease;
+    display: none;
 }
 
 .modal.show {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
     background: white;
-    margin: 5% auto;
     padding: 30px;
     border-radius: 15px;
     width: 90%;
@@ -470,49 +636,6 @@ h3 {
 
 .close:hover {
     color: #333;
-}
-
-/* Листы аэропортов */
-.airports-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    max-height: 200px;
-    overflow-y: auto;
-    display: none;
-    z-index: 100;
-}
-
-.airports-list.show {
-    display: block;
-}
-
-.airport-item {
-    padding: 12px 15px;
-    cursor: pointer;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background 0.2s ease;
-}
-
-.airport-item:hover {
-    background: #f8f9fa;
-    color: #667eea;
-}
-
-.airport-item-code {
-    font-weight: 700;
-    color: #667eea;
-}
-
-.airport-item-name {
-    font-size: 12px;
-    color: #999;
-    margin-top: 2px;
 }
 
 /* Респонсивность */
@@ -545,9 +668,11 @@ h3 {
         padding: 15px;
     }
     
-    .modal-content {
+    .modal-content,
+    .auth-box {
         width: 95%;
-        margin: 20% auto;
+        margin: auto;
+        max-width: none;
     }
 }
 
@@ -561,12 +686,12 @@ h3 {
         width: 100%;
     }
     
-    .flight-details {
-        grid-template-columns: 1fr;
-    }
-    
-    .flight-info {
+    .flight-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+    
+    .auth-box {
+        padding: 30px 20px;
     }
 }
