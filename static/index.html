@@ -7,188 +7,241 @@
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Навигация -->
-        <nav class="navbar">
-            <div class="navbar-brand">
-                <h1 class="logo">✈️ Крылья онлайн</h1>
-                <p class="tagline">Система бронирования авиабилетов</p>
+    <!-- Модальное окно авторизации -->
+    <div id="auth-modal" class="modal show-auth">
+        <div class="auth-container">
+            <div class="auth-box">
+                <h1 class="logo-auth">✈️ Крылья онлайн</h1>
+                
+                <!-- Форма входа -->
+                <div id="login-form" class="auth-form active">
+                    <h2>Вход в аккаунт</h2>
+                    <div class="form-group">
+                        <label for="login-email">Email:</label>
+                        <input type="email" id="login-email" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Пароль:</label>
+                        <input type="password" id="login-password" placeholder="Ваш пароль">
+                    </div>
+                    <button class="btn btn-primary" id="login-btn">Войти</button>
+                    <p class="auth-switch">Нет аккаунта? <a href="#" onclick="switchAuth()">Зарегистрироваться</a></p>
+                </div>
+                
+                <!-- Форма регистрации -->
+                <div id="register-form" class="auth-form">
+                    <h2>Создать аккаунт</h2>
+                    <div class="form-group">
+                        <label for="register-name">Имя:</label>
+                        <input type="text" id="register-name" placeholder="Ваше имя">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email:</label>
+                        <input type="email" id="register-email" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Пароль:</label>
+                        <input type="password" id="register-password" placeholder="Минимум 6 символов">
+                    </div>
+                    <button class="btn btn-success" id="register-btn">Зарегистрироваться</button>
+                    <p class="auth-switch">Уже есть аккаунт? <a href="#" onclick="switchAuth()">Войти</a></p>
+                </div>
+                
+                <!-- Demo кнопка -->
+                <div class="demo-login">
+                    <p>или</p>
+                    <button class="btn btn-info" id="demo-btn">Войти как демо пользователь</button>
+                </div>
             </div>
-            <div class="navbar-menu">
-                <button class="nav-btn active" data-tab="search">Поиск рейсов</button>
-                <button class="nav-btn" data-tab="bookings">Мои бронирования</button>
-                <button class="nav-btn" data-tab="manage">Управление рейсами</button>
-            </div>
-        </nav>
-
-        <!-- Основной контент -->
-        <main class="main-content">
-            
-            <!-- Вкладка: Поиск рейсов -->
-            <section id="search" class="tab-content active">
-                <div class="search-panel">
-                    <h2>🔍 Поиск авиабилетов</h2>
-                    <div class="search-form">
-                        <div class="form-group">
-                            <label for="search-from">Откуда:</label>
-                            <input type="text" id="search-from" placeholder="Код аэропорта (например: MOW)">
-                            <div id="from-airports" class="airports-list"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="search-to">Куда:</label>
-                            <input type="text" id="search-to" placeholder="Код аэропорта">
-                            <div id="to-airports" class="airports-list"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="search-date">Дата вылета:</label>
-                            <input type="date" id="search-date">
-                        </div>
-                        
-                        <button class="btn btn-primary" id="search-btn">Найти рейсы</button>
-                    </div>
+        </div>
+    </div>
+    
+    <!-- Основное приложение -->
+    <div id="app-container" style="display: none;">
+        <div class="container">
+            <!-- Навигация -->
+            <nav class="navbar">
+                <div class="navbar-brand">
+                    <h1 class="logo">✈️ Крылья онлайн</h1>
+                    <p class="tagline">Система бронирования авиабилетов</p>
                 </div>
-
-                <!-- Результаты поиска -->
-                <div class="results-panel">
-                    <h2>Найденные рейсы</h2>
-                    <div id="flights-list" class="flights-container">
-                        <p class="empty-state">Начните поиск, чтобы увидеть доступные рейсы</p>
-                    </div>
+                <div class="navbar-menu">
+                    <button class="nav-btn active" data-tab="search">🔍 Поиск рейсов</button>
+                    <button class="nav-btn" data-tab="bookings">📋 Мои бронирования</button>
+                    <button class="nav-btn" data-tab="manage">⚙️ Управление</button>
+                    <button class="btn btn-outline" id="logout-btn">Выход</button>
                 </div>
-            </section>
+            </nav>
 
-            <!-- Вкладка: Мои бронирования -->
-            <section id="bookings" class="tab-content">
-                <div class="bookings-panel">
-                    <h2>📋 Ваши бронирования</h2>
-                    <div class="booking-form">
-                        <div class="form-group">
-                            <label for="booking-flight-id">ID рейса:</label>
-                            <input type="number" id="booking-flight-id" placeholder="Введите ID рейса">
+            <!-- Основной контент -->
+            <main class="main-content">
+                
+                <!-- Вкладка: Поиск рейсов -->
+                <section id="search" class="tab-content active">
+                    <div class="search-panel">
+                        <h2>🔍 Поиск авиабилетов</h2>
+                        <div class="search-form">
+                            <div class="form-group">
+                                <label for="search-from">Откуда:</label>
+                                <input type="text" id="search-from" placeholder="Код аэропорта (например: MOW)">
+                                <div id="from-airports" class="airports-list"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="search-to">Куда:</label>
+                                <input type="text" id="search-to" placeholder="Код аэропорта">
+                                <div id="to-airports" class="airports-list"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="search-date">Дата вылета:</label>
+                                <input type="date" id="search-date">
+                            </div>
+                            
+                            <button class="btn btn-primary" id="search-btn">Найти рейсы</button>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="booking-name">ФИО пассажира:</label>
-                            <input type="text" id="booking-name" placeholder="Полное имя">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="booking-email">Email:</label>
-                            <input type="email" id="booking-email" placeholder="your@email.com">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="booking-phone">Телефон:</label>
-                            <input type="tel" id="booking-phone" placeholder="+7 (999) 123-45-67">
-                        </div>
-                        
-                        <button class="btn btn-success" id="create-booking-btn">Забронировать</button>
                     </div>
-                </div>
 
-                <div class="my-bookings-panel">
-                    <h3>Список ваших бронирований</h3>
-                    <div id="my-bookings-list" class="bookings-container">
-                        <p class="empty-state">У вас нет бронирований</p>
+                    <!-- Результаты поиска -->
+                    <div class="results-panel">
+                        <h2>Найденные рейсы</h2>
+                        <div id="flights-list" class="flights-container">
+                            <p class="empty-state">Начните поиск, чтобы увидеть доступные рейсы</p>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Вкладка: Управление рейсами -->
-            <section id="manage" class="tab-content">
-                <div class="admin-panel">
-                    <h2>🛠️ Управление рейсами</h2>
-                    
-                    <!-- Добавление аэропорта -->
+                <!-- Вкладка: Мои бронирования -->
+                <section id="bookings" class="tab-content">
+                    <div class="bookings-panel">
+                        <h2>📋 Забронировать билет</h2>
+                        <div class="booking-form">
+                            <div class="form-group">
+                                <label for="booking-flight-id">ID рейса:</label>
+                                <input type="number" id="booking-flight-id" placeholder="Введите ID рейса">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="booking-name">ФИО пассажира:</label>
+                                <input type="text" id="booking-name" placeholder="Полное имя">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="booking-email">Email:</label>
+                                <input type="email" id="booking-email" placeholder="your@email.com">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="booking-phone">Телефон:</label>
+                                <input type="tel" id="booking-phone" placeholder="+7 (999) 123-45-67">
+                            </div>
+                            
+                            <button class="btn btn-success" id="create-booking-btn">Забронировать</button>
+                        </div>
+                    </div>
+
+                    <div class="my-bookings-panel">
+                        <h3>Список ваших бронирований</h3>
+                        <div id="my-bookings-list" class="bookings-container">
+                            <p class="empty-state">У вас нет бронирований</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Вкладка: Управление рейсами -->
+                <section id="manage" class="tab-content">
+                    <div class="admin-panel">
+                        <h2>⚙️ Управление рейсами</h2>
+                        
+                        <!-- Добавление аэропорта -->
+                        <div class="admin-section">
+                            <h3>Добавить аэропорт</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="airport-code">Код (3 буквы):</label>
+                                    <input type="text" id="airport-code" maxlength="3" placeholder="MOW">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="airport-name">Название аэропорта:</label>
+                                    <input type="text" id="airport-name" placeholder="Шереметьево">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="airport-city">Город:</label>
+                                    <input type="text" id="airport-city" placeholder="Москва">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="airport-country">Страна:</label>
+                                    <input type="text" id="airport-country" placeholder="Россия">
+                                </div>
+                            </div>
+                            <button class="btn btn-info" id="add-airport-btn">Добавить аэропорт</button>
+                        </div>
+
+                        <!-- Добавление рейса -->
+                        <div class="admin-section">
+                            <h3>Добавить новый рейс</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="flight-number">Номер рейса:</label>
+                                    <input type="text" id="flight-number" placeholder="SU-123">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="flight-airline">Авиакомпания:</label>
+                                    <input type="text" id="flight-airline" placeholder="Aeroflot">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="flight-from-airport">Аэропорт вылета:</label>
+                                    <select id="flight-from-airport">
+                                        <option value="">Выберите аэропорт...</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="flight-to-airport">Аэропорт прилета:</label>
+                                    <select id="flight-to-airport">
+                                        <option value="">Выберите аэропорт...</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="flight-departure">Время вылета:</label>
+                                    <input type="datetime-local" id="flight-departure">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="flight-arrival">Время прилета:</label>
+                                    <input type="datetime-local" id="flight-arrival">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="flight-seats">Количество мест:</label>
+                                    <input type="number" id="flight-seats" min="1" placeholder="150">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="flight-price">Цена за билет (руб.):</label>
+                                    <input type="number" id="flight-price" min="1" step="0.01" placeholder="10000">
+                                </div>
+                            </div>
+                            <button class="btn btn-success" id="add-flight-btn">Добавить рейс</button>
+                        </div>
+                    </div>
+
+                    <!-- Список всех рейсов для управления -->
                     <div class="admin-section">
-                        <h3>Добавить аэропорт</h3>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="airport-code">Код (3 буквы):</label>
-                                <input type="text" id="airport-code" maxlength="3" placeholder="MOW">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="airport-name">Название аэропорта:</label>
-                                <input type="text" id="airport-name" placeholder="Шереметьево">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="airport-city">Город:</label>
-                                <input type="text" id="airport-city" placeholder="Москва">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="airport-country">Страна:</label>
-                                <input type="text" id="airport-country" placeholder="Россия">
-                            </div>
+                        <h3>Все рейсы в системе</h3>
+                        <div id="all-flights-list" class="flights-container">
+                            <p class="empty-state">Загружаю список рейсов...</p>
                         </div>
-                        <button class="btn btn-info" id="add-airport-btn">Добавить аэропорт</button>
                     </div>
-
-                    <!-- Добавление рейса -->
-                    <div class="admin-section">
-                        <h3>Добавить новый рейс</h3>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="flight-number">Номер рейса:</label>
-                                <input type="text" id="flight-number" placeholder="SU-123">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="flight-airline">Авиакомпания:</label>
-                                <input type="text" id="flight-airline" placeholder="Aeroflot">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="flight-from-airport">Аэропорт вылета:</label>
-                                <select id="flight-from-airport">
-                                    <option value="">Выберите аэропорт...</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="flight-to-airport">Аэропорт прилета:</label>
-                                <select id="flight-to-airport">
-                                    <option value="">Выберите аэропорт...</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="flight-departure">Время вылета:</label>
-                                <input type="datetime-local" id="flight-departure">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="flight-arrival">Время прилета:</label>
-                                <input type="datetime-local" id="flight-arrival">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="flight-seats">Количество мест:</label>
-                                <input type="number" id="flight-seats" min="1" placeholder="150">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="flight-price">Цена за билет (руб.):</label>
-                                <input type="number" id="flight-price" min="1" step="0.01" placeholder="10000">
-                            </div>
-                        </div>
-                        <button class="btn btn-success" id="add-flight-btn">Добавить рейс</button>
-                    </div>
-                </div>
-
-                <!-- Список всех рейсов для управления -->
-                <div class="admin-section">
-                    <h3>Все рейсы в системе</h3>
-                    <div id="all-flights-list" class="flights-container">
-                        <p class="empty-state">Загружаю список рейсов...</p>
-                    </div>
-                </div>
-            </section>
-        </main>
+                </section>
+            </main>
+        </div>
     </div>
 
     <!-- Модальное окно для деталей рейса -->
