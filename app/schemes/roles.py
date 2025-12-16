@@ -12,3 +12,8 @@ class SRoleAdd(BaseModel):
 
 class SRoleGet(SRoleAdd):
     id: int
+
+
+# Aliases for compatibility
+RoleCreate = SRoleAdd
+RoleRead = SRoleGet
