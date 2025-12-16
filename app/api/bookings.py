@@ -120,3 +120,46 @@ async def get_booking(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/{booking_id}", status_code=200)
+async def delete_booking(
+    booking_id: int,
+    db_session: AsyncSession = Depends(get_db_session),
+):
+    """Delete a booking by ID"""
+    logger.info(f"[Bookings DELETE] Attempting to delete booking {booking_id}")
+    try:
+        booking_repo = BookingRepository(db_session)
+        flight_repo = FlightRepository(db_session)
+        
+        # Get booking
+        booking = await booking_repo.get_booking_by_id(booking_id)
+        if not booking:
+            logger.error(f"[Bookings DELETE] Booking not found: {booking_id}")
+            raise HTTPException(status_code=404, detail="Booking not found")
+        
+        logger.info(f"[Bookings DELETE] Found booking: {booking.booking_number}")
+        
+        # Get flight to restore seats
+        flight = await flight_repo.get_flight_by_id(booking.flight_id)
+        if flight:
+            logger.info(f"[Bookings DELETE] Restoring {booking.seats_count} seats to flight {flight.flight_number}")
+            new_available = flight.available_seats + booking.seats_count
+            await flight_repo.update_flight(
+                booking.flight_id,
+                {"available_seats": new_available},
+            )
+            logger.info(f"[Bookings DELETE] Flight seats updated")
+        
+        # Delete booking
+        await booking_repo.delete_booking(booking_id)
+        logger.info(f"[Bookings DELETE] Booking {booking_id} deleted successfully")
+        
+        return {"message": f"Booking {booking.booking_number} deleted successfully", "booking_id": booking_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"[Bookings DELETE] Error: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
