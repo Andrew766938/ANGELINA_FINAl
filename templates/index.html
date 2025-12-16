@@ -253,22 +253,10 @@
         ];
 
         const DEMO_BOOKINGS = [
-            { id: 1, booking_number: 'BK-001', passenger_name: 'Иван Петров', passenger_email: 'ivan@example.com', passenger_phone: '+7 999 111-00-01', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
-            { id: 2, booking_number: 'BK-002', passenger_name: 'Мария Сидорова', passenger_email: 'maria@example.com', passenger_phone: '+7 999 222-00-02', seats_count: 2, status: 'ПОДТВЕРЖДЕНО' },
-            { id: 3, booking_number: 'BK-003', passenger_name: 'Алексей Иванов', passenger_email: 'alex@example.com', passenger_phone: '+7 999 333-00-03', seats_count: 1, status: 'ЗАВЕРШЕНО' },
-            { id: 4, booking_number: 'BK-004', passenger_name: 'Елена Смирнова', passenger_email: 'elena@example.com', passenger_phone: '+7 999 444-00-04', seats_count: 1, status: 'ОЖИДАНИЕ' },
-            { id: 5, booking_number: 'BK-005', passenger_name: 'Сергей Федоров', passenger_email: 'sergey@example.com', passenger_phone: '+7 999 555-00-05', seats_count: 3, status: 'ПОДТВЕРЖДЕНО' },
-            { id: 6, booking_number: 'BK-006', passenger_name: 'Ольга Новикова', passenger_email: 'olga@example.com', passenger_phone: '+7 999 666-00-06', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
-            { id: 7, booking_number: 'BK-007', passenger_name: 'Виктор Козлов', passenger_email: 'victor@example.com', passenger_phone: '+7 999 777-00-07', seats_count: 2, status: 'ЗАВЕРШЕНО' },
-            { id: 8, booking_number: 'BK-008', passenger_name: 'Екатерина Волкова', passenger_email: 'kate@example.com', passenger_phone: '+7 999 888-00-08', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
-            { id: 9, booking_number: 'BK-009', passenger_name: 'Максим Соколов', passenger_email: 'max@example.com', passenger_phone: '+7 999 900-00-09', seats_count: 4, status: 'ОЖИДАНИЕ' },
-            { id: 10, booking_number: 'BK-010', passenger_name: 'Наталья Степанова', passenger_email: 'nata@example.com', passenger_phone: '+7 999 101-00-10', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
-            { id: 11, booking_number: 'BK-011', passenger_name: 'Павел Морозов', passenger_email: 'pavel@example.com', passenger_phone: '+7 999 202-00-11', seats_count: 2, status: 'ЗАВЕРШЕНО' },
-            { id: 12, booking_number: 'BK-012', passenger_name: 'Анна Буланова', passenger_email: 'anna@example.com', passenger_phone: '+7 999 303-00-12', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
-            { id: 13, booking_number: 'BK-013', passenger_name: 'Дмитрий Петров', passenger_email: 'dmitry@example.com', passenger_phone: '+7 999 404-00-13', seats_count: 3, status: 'ОЖИДАНИЕ' },
-            { id: 14, booking_number: 'BK-014', passenger_name: 'Валентина Соловьева', passenger_email: 'val@example.com', passenger_phone: '+7 999 505-00-14', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
-            { id: 15, booking_number: 'BK-015', passenger_name: 'Руслан Кузнецов', passenger_email: 'ruslan@example.com', passenger_phone: '+7 999 606-00-15', seats_count: 2, status: 'ЗАВЕРШЕНО' },
-            { id: 16, booking_number: 'BK-016', passenger_name: 'Людмила Волохова', passenger_email: 'lyuda@example.com', passenger_phone: '+7 999 707-00-16', seats_count: 1, status: 'ПОДТВЕРЖДЕНО' },
+            { id: 1, booking_number: 'BK-001', passenger_name: 'Иван Петров', passenger_email: 'ivan@example.com', passenger_phone: '+7 999 111-00-01', seats_count: 1, status: 'pending' },
+            { id: 2, booking_number: 'BK-002', passenger_name: 'Мария Сидорова', passenger_email: 'maria@example.com', passenger_phone: '+7 999 222-00-02', seats_count: 2, status: 'pending' },
+            { id: 3, booking_number: 'BK-003', passenger_name: 'Алексей Иванов', passenger_email: 'alex@example.com', passenger_phone: '+7 999 333-00-03', seats_count: 1, status: 'completed' },
+            { id: 4, booking_number: 'BK-004', passenger_name: 'Елена Смирнова', passenger_email: 'elena@example.com', passenger_phone: '+7 999 444-00-04', seats_count: 1, status: 'pending' },
         ];
 
 
@@ -621,6 +609,8 @@
                     document.getElementById('airport-name').value = '';
                     document.getElementById('airport-city').value = '';
                     document.getElementById('airport-country').value = '';
+                    // Очистим кэш и загружаем снова - теперь все аэропорты видны
+                    cachedAirports = [];
                     await loadAllAirports();
                 } else {
                     const err = await res.json();
@@ -664,7 +654,7 @@
                     <p><strong>📧 Email:</strong> ${b.passenger_email}</p>
                     <p><strong>📱 Телефон:</strong> ${b.passenger_phone}</p>
                     <p><strong>💺 Мест:</strong> ${b.seats_count || 1}</p>
-                    <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'ПОДТВЕРЖДЕНО'}</span></p>
+                    <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'pending'}</span></p>
                 </div>
             `).join('');
         }
