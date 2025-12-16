@@ -34,3 +34,9 @@ class SUserPatch(BaseModel):
     email: EmailStr | None = None
     hashed_password: str | None = None
     role_id: int | None = None
+
+
+# Aliases for compatibility
+UserCreate = SUserAddRequest
+UserRead = SUserGet
+UserUpdate = SUserPatch
