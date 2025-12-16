@@ -149,7 +149,7 @@ input, button, select, textarea {
     color: #cbd5e0;
 }
 
-/* BUTTONS - ОЧЕНЬ КРАСИВЫЕ */
+/* BUTTONS */
 .btn-auth {
     width: 100%;
     padding: 13px 16px;
@@ -250,18 +250,18 @@ input, button, select, textarea {
 
 .navbar {
     background: white;
-    padding: 16px 24px;
+    padding: 16px 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 12px;
 }
 
 .navbar-brand h1 {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 800;
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     -webkit-background-clip: text;
@@ -275,19 +275,21 @@ input, button, select, textarea {
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .nav-btn {
-    padding: 10px 16px;
+    padding: 8px 14px;
     background: white;
     color: var(--primary);
     border: 2px solid var(--primary);
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.3px;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
 }
 
 .nav-btn:hover {
@@ -329,16 +331,17 @@ input, button, select, textarea {
 }
 
 .tab-btn {
-    padding: 10px 18px;
+    padding: 10px 16px;
     background: rgba(255, 255, 255, 0.15);
     color: white;
     border: 2px solid transparent;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.3px;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
 }
 
 .tab-btn:hover {
@@ -620,25 +623,32 @@ h2 {
     }
 }
 
-/* ============== RESPONSIVE ============== */
+/* ============== TABLET (768px) ============== */
 @media (max-width: 768px) {
     .auth-box {
         padding: 40px 24px;
     }
 
+    .auth-box h1 {
+        font-size: 28px;
+    }
+
     .navbar {
-        flex-direction: column;
-        gap: 12px;
+        padding: 12px 16px;
+        gap: 8px;
+    }
+
+    .navbar-brand h1 {
+        font-size: 20px;
     }
 
     .navbar-menu {
-        width: 100%;
-        justify-content: center;
+        gap: 6px;
     }
 
     .nav-btn {
-        flex: 1;
-        min-width: 80px;
+        padding: 6px 10px;
+        font-size: 11px;
     }
 
     .cards-grid {
@@ -651,13 +661,27 @@ h2 {
 
     h2 {
         font-size: 24px;
+        margin-bottom: 20px;
     }
 
     .tabs-container {
         justify-content: center;
     }
+
+    .form-card {
+        padding: 20px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .container {
+        padding: 0 16px 30px;
+    }
 }
 
+/* ============== PHONE (480px) ============== */
 @media (max-width: 480px) {
     .auth-container {
         padding: 12px;
@@ -665,21 +689,121 @@ h2 {
 
     .auth-box {
         padding: 30px 20px;
+        border-radius: 12px;
     }
 
     .auth-box h1 {
-        font-size: 28px;
+        font-size: 24px;
+    }
+
+    .auth-box .subtitle {
+        font-size: 12px;
+        margin-bottom: 30px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        padding: 10px 12px;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .navbar-brand h1 {
+        font-size: 18px;
+        text-align: center;
     }
 
     .navbar-menu {
-        flex-direction: column;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
     }
 
     .nav-btn {
-        width: 100%;
+        padding: 6px 8px;
+        font-size: 10px;
+        flex: 0 1 auto;
+    }
+
+    .container {
+        padding: 0 12px 20px;
+    }
+
+    h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    .tab-btn {
+        padding: 8px 12px;
+        font-size: 12px;
     }
 
     .form-card {
         padding: 16px;
+        margin-bottom: 15px;
+    }
+
+    .form-card h3 {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .form-card input {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-select {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+
+    .card h3 {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .card p {
+        font-size: 13px;
+        margin: 6px 0;
+    }
+
+    .account-section {
+        padding: 16px;
+    }
+
+    .account-section h3 {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .account-section p {
+        font-size: 14px;
+        margin: 10px 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .notification {
+        left: 10px;
+        right: 10px;
+        top: 10px;
+        padding: 12px 16px;
+        font-size: 12px;
     }
 }
