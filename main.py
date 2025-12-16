@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pathlib import Path
@@ -13,6 +14,15 @@ app = FastAPI(
     title="Крылья онлайн - Система бронирования авиа билетов",
     description="API для системы бронирования авиа билетов",
     version="1.0.0"
+)
+
+# ============== CORS CONFIGURATION ==============
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Разрешить все источники для разработки
+    allow_credentials=True,
+    allow_methods=["*"],  # Разрешить все HTTP методы
+    allow_headers=["*"],  # Разрешить все заголовки
 )
 
 # Подключаем все роутеры
