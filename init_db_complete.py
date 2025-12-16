@@ -8,6 +8,7 @@ from app.database.database import Base
 from app.models.flight import AirportModel, FlightModel
 from app.models.booking import BookingModel, BookingStatus
 from app.models.users import UserModel
+from app.models.roles import RoleModel
 
 
 async def init_db():
@@ -34,6 +35,13 @@ async def init_db():
                 return
         except:
             pass
+        
+        # Create roles
+        user_role = RoleModel(name="user")
+        admin_role = RoleModel(name="admin")
+        session.add(user_role)
+        session.add(admin_role)
+        await session.flush()
         
         # Create 16 airports
         airports = [
@@ -82,29 +90,31 @@ async def init_db():
         session.add_all(flights)
         await session.flush()
         
-        # Create demo user
-        demo_user = UserModel(email="demo@example.com", full_name="Демо Пользователь", hashed_password="demo123")
+        # Create demo users (user and admin)
+        demo_user = UserModel(name="Демо Пользователь", email="demo@example.com", hashed_password="demo123", role_id=user_role.id)
+        demo_admin = UserModel(name="Админ", email="admin@example.com", hashed_password="admin123", role_id=admin_role.id)
         session.add(demo_user)
+        session.add(demo_admin)
         await session.flush()
         
         # Create 16 bookings (tickets)
         bookings = [
-            BookingModel(booking_number="BK-001", user_id=1, flight_id=1, passenger_name="Иван Петров", passenger_email="ivan@example.com", passenger_phone="+7-999-111-0001", seats_count=1, total_price=5500, status=BookingStatus.CONFIRMED),
-            BookingModel(booking_number="BK-002", user_id=1, flight_id=2, passenger_name="Мария Сидорова", passenger_email="maria@example.com", passenger_phone="+7-999-222-0002", seats_count=2, total_price=11000, status=BookingStatus.CONFIRMED),
-            BookingModel(booking_number="BK-003", user_id=1, flight_id=3, passenger_name="Алексей Иванов", passenger_email="alex@example.com", passenger_phone="+7-999-333-0003", seats_count=1, total_price=4800, status=BookingStatus.COMPLETED),
-            BookingModel(booking_number="BK-004", user_id=1, flight_id=4, passenger_name="Елена Смирнова", passenger_email="elena@example.com", passenger_phone="+7-999-444-0004", seats_count=1, total_price=6200, status=BookingStatus.PENDING),
-            BookingModel(booking_number="BK-005", user_id=1, flight_id=5, passenger_name="Сергей Федоров", passenger_email="sergey@example.com", passenger_phone="+7-999-555-0005", seats_count=1, total_price=7200, status=BookingStatus.CONFIRMED),
-            BookingModel(booking_number="BK-006", user_id=1, flight_id=6, passenger_name="Ольга Новикова", passenger_email="olga@example.com", passenger_phone="+7-999-666-0006", seats_count=3, total_price=25500, status=BookingStatus.CONFIRMED),
-            BookingModel(booking_number="BK-007", user_id=1, flight_id=7, passenger_name="Виктор Козлов", passenger_email="victor@example.com", passenger_phone="+7-999-777-0007", seats_count=1, total_price=6800, status=BookingStatus.COMPLETED),
-            BookingModel(booking_number="BK-008", user_id=1, flight_id=8, passenger_name="Екатерина Волкова", passenger_email="kate@example.com", passenger_phone="+7-999-888-0008", seats_count=1, total_price=5200, status=BookingStatus.CONFIRMED),
-            BookingModel(booking_number="BK-009", user_id=1, flight_id=9, passenger_name="Максим Соколов", passenger_email="max@example.com", passenger_phone="+7-999-900-0009", seats_count=2, total_price=11600, status=BookingStatus.PENDING),
-            BookingModel(booking_number="BK-010", user_id=1, flight_id=10, passenger_name="Наталья Степанова", passenger_email="nata@example.com", passenger_phone="+7-999-101-0010", seats_count=1, total_price=5400, status=BookingStatus.CONFIRMED),
-            BookingModel(booking_number="BK-011", user_id=1, flight_id=11, passenger_name="Павел Морозов", passenger_email="pavel@example.com", passenger_phone="+7-999-202-0011", seats_count=1, total_price=7800, status=BookingStatus.COMPLETED),
-            BookingModel(booking_number="BK-012", user_id=1, flight_id=12, passenger_name="Анна Буланова", passenger_email="anna@example.com", passenger_phone="+7-999-303-0012", seats_count=1, total_price=8200, status=BookingStatus.CONFIRMED),
-            BookingModel(booking_number="BK-013", user_id=1, flight_id=13, passenger_name="Дмитрий Петров", passenger_email="dmitry@example.com", passenger_phone="+7-999-404-0013", seats_count=1, total_price=6500, status=BookingStatus.PENDING),
-            BookingModel(booking_number="BK-014", user_id=1, flight_id=14, passenger_name="Валентина Соловьева", passenger_email="val@example.com", passenger_phone="+7-999-505-0014", seats_count=2, total_price=11400, status=BookingStatus.CONFIRMED),
-            BookingModel(booking_number="BK-015", user_id=1, flight_id=15, passenger_name="Руслан Кузнецов", passenger_email="ruslan@example.com", passenger_phone="+7-999-606-0015", seats_count=1, total_price=4200, status=BookingStatus.COMPLETED),
-            BookingModel(booking_number="BK-016", user_id=1, flight_id=16, passenger_name="Людмила Волохова", passenger_email="lyuda@example.com", passenger_phone="+7-999-707-0016", seats_count=1, total_price=9200, status=BookingStatus.CONFIRMED),
+            BookingModel(booking_number="BK-001", user_id=demo_user.id, flight_id=1, passenger_name="Иван Петров", passenger_email="ivan@example.com", passenger_phone="+7-999-111-0001", seats_count=1, total_price=5500, status=BookingStatus.CONFIRMED),
+            BookingModel(booking_number="BK-002", user_id=demo_user.id, flight_id=2, passenger_name="Мария Сидорова", passenger_email="maria@example.com", passenger_phone="+7-999-222-0002", seats_count=2, total_price=11000, status=BookingStatus.CONFIRMED),
+            BookingModel(booking_number="BK-003", user_id=demo_user.id, flight_id=3, passenger_name="Алексей Иванов", passenger_email="alex@example.com", passenger_phone="+7-999-333-0003", seats_count=1, total_price=4800, status=BookingStatus.COMPLETED),
+            BookingModel(booking_number="BK-004", user_id=demo_user.id, flight_id=4, passenger_name="Елена Смирнова", passenger_email="elena@example.com", passenger_phone="+7-999-444-0004", seats_count=1, total_price=6200, status=BookingStatus.PENDING),
+            BookingModel(booking_number="BK-005", user_id=demo_user.id, flight_id=5, passenger_name="Сергей Федоров", passenger_email="sergey@example.com", passenger_phone="+7-999-555-0005", seats_count=1, total_price=7200, status=BookingStatus.CONFIRMED),
+            BookingModel(booking_number="BK-006", user_id=demo_user.id, flight_id=6, passenger_name="Ольга Новикова", passenger_email="olga@example.com", passenger_phone="+7-999-666-0006", seats_count=3, total_price=25500, status=BookingStatus.CONFIRMED),
+            BookingModel(booking_number="BK-007", user_id=demo_user.id, flight_id=7, passenger_name="Виктор Козлов", passenger_email="victor@example.com", passenger_phone="+7-999-777-0007", seats_count=1, total_price=6800, status=BookingStatus.COMPLETED),
+            BookingModel(booking_number="BK-008", user_id=demo_user.id, flight_id=8, passenger_name="Екатерина Волкова", passenger_email="kate@example.com", passenger_phone="+7-999-888-0008", seats_count=1, total_price=5200, status=BookingStatus.CONFIRMED),
+            BookingModel(booking_number="BK-009", user_id=demo_user.id, flight_id=9, passenger_name="Максим Соколов", passenger_email="max@example.com", passenger_phone="+7-999-900-0009", seats_count=2, total_price=11600, status=BookingStatus.PENDING),
+            BookingModel(booking_number="BK-010", user_id=demo_user.id, flight_id=10, passenger_name="Наталья Степанова", passenger_email="nata@example.com", passenger_phone="+7-999-101-0010", seats_count=1, total_price=5400, status=BookingStatus.CONFIRMED),
+            BookingModel(booking_number="BK-011", user_id=demo_user.id, flight_id=11, passenger_name="Павел Морозов", passenger_email="pavel@example.com", passenger_phone="+7-999-202-0011", seats_count=1, total_price=7800, status=BookingStatus.COMPLETED),
+            BookingModel(booking_number="BK-012", user_id=demo_user.id, flight_id=12, passenger_name="Анна Буланова", passenger_email="anna@example.com", passenger_phone="+7-999-303-0012", seats_count=1, total_price=8200, status=BookingStatus.CONFIRMED),
+            BookingModel(booking_number="BK-013", user_id=demo_user.id, flight_id=13, passenger_name="Дмитрий Петров", passenger_email="dmitry@example.com", passenger_phone="+7-999-404-0013", seats_count=1, total_price=6500, status=BookingStatus.PENDING),
+            BookingModel(booking_number="BK-014", user_id=demo_user.id, flight_id=14, passenger_name="Валентина Соловьева", passenger_email="val@example.com", passenger_phone="+7-999-505-0014", seats_count=2, total_price=11400, status=BookingStatus.CONFIRMED),
+            BookingModel(booking_number="BK-015", user_id=demo_user.id, flight_id=15, passenger_name="Руслан Кузнецов", passenger_email="ruslan@example.com", passenger_phone="+7-999-606-0015", seats_count=1, total_price=4200, status=BookingStatus.COMPLETED),
+            BookingModel(booking_number="BK-016", user_id=demo_user.id, flight_id=16, passenger_name="Людмила Волохова", passenger_email="lyuda@example.com", passenger_phone="+7-999-707-0016", seats_count=1, total_price=9200, status=BookingStatus.CONFIRMED),
         ]
         
         session.add_all(bookings)
@@ -115,6 +125,7 @@ async def init_db():
         print(f"  - 16 flights created")
         print(f"  - 16 bookings (tickets) created")
         print(f"  - Demo user created (demo@example.com / demo123)")
+        print(f"  - Demo admin created (admin@example.com / admin123)")
     
     await engine.dispose()
 
