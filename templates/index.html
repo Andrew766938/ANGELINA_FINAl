@@ -26,6 +26,14 @@
                         <input type="password" id="login-password" placeholder="demo123" value="demo123">
                     </div>
                     <button class="btn-auth" onclick="login()">🔓 ВОЙТИ</button>
+                    
+                    <!-- Быстрые кнопки входа -->
+                    <div style="margin-top: 20px; text-align: center;">
+                        <p style="color: #a0aec0; margin-bottom: 10px; font-size: 12px;">Быстрый вход</p>
+                        <button class="btn-secondary" onclick="quickLoginUser()" style="width: 48%; display: inline-block; margin-right: 4%;">👤 Пользователь</button>
+                        <button class="btn-secondary" onclick="quickLoginAdmin()" style="width: 48%; display: inline-block;">👑 Админ</button>
+                    </div>
+                    
                     <p class="auth-link">Нет аккаунта? <a onclick="switchAuthForm()">Зарегистрироваться</a></p>
                 </div>
                 
@@ -276,6 +284,17 @@
             document.getElementById('register-form').classList.toggle('active');
         }
 
+        function quickLoginUser() {
+            document.getElementById('login-email').value = 'demo@example.com';
+            document.getElementById('login-password').value = 'demo123';
+            login();
+        }
+
+        function quickLoginAdmin() {
+            document.getElementById('login-email').value = 'admin@example.com';
+            document.getElementById('login-password').value = 'admin123';
+            login();
+        }
 
         function login() {
             const email = document.getElementById('login-email').value.trim();
@@ -413,7 +432,7 @@
                     cachedFlights = DEMO_FLIGHTS;
                 }
             } catch (e) {
-                console.error('Ошибка загрузки рейсов, используем DEMO:', e);
+                console.error('Ошибка загружки рейсов, используем DEMO:', e);
                 cachedFlights = DEMO_FLIGHTS;
             }
             renderFlights();
@@ -551,7 +570,7 @@
                     cachedAirports = DEMO_AIRPORTS;
                 }
             } catch (e) {
-                console.error('Ошибка загрузки аэропортов, используем DEMO:', e);
+                console.error('Ошибка загружки аэропортов, используем DEMO:', e);
                 cachedAirports = DEMO_AIRPORTS;
             }
             renderAirports();
@@ -626,7 +645,7 @@
                     cachedBookings = DEMO_BOOKINGS;
                 }
             } catch (e) {
-                console.error('Ошибка загрузки билетов, используем DEMO:', e);
+                console.error('Ошибка загружки билетов, используем DEMO:', e);
                 cachedBookings = DEMO_BOOKINGS;
             }
             renderBookings();
