@@ -125,10 +125,18 @@ async def get_booking(
 @router.delete("/{booking_id}", status_code=200)
 async def delete_booking(
     booking_id: int,
+    is_admin: bool = False,
     db_session: AsyncSession = Depends(get_db_session),
 ):
-    """Delete a booking by ID"""
+    """Delete a booking by ID (Admin only)"""
     logger.info(f"[Bookings DELETE] Attempting to delete booking {booking_id}")
+    logger.info(f"[Bookings DELETE] User is_admin: {is_admin}")
+    
+    # Check if user is admin
+    if not is_admin:
+        logger.error(f"[Bookings DELETE] Access denied - user is not admin")
+        raise HTTPException(status_code=403, detail="Only administrators can delete bookings")
+    
     try:
         booking_repo = BookingRepository(db_session)
         flight_repo = FlightRepository(db_session)
