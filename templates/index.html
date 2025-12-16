@@ -213,16 +213,13 @@
         const API_URL = 'http://localhost:8000';
         let currentUser = null;
         
-        // ========== КЕШЕ ДАННЫХ В ПАМЯТи ==========
         let cachedFlights = [];
         let cachedAirports = [];
         let cachedBookings = [];
 
-        // ========== СОСтОЯНИЕ ВКЛАДОК ==========
         let currentFlightTab = 'all';
         let selectedFlightForBooking = null;
 
-        // ========== DEMO-ДАННЫЕ (FALLBACK) ==========
         const DEMO_FLIGHTS = [
             { id: 1, flight_number: 'SU-001', airline: 'Аэрофлот', departure_airport_id: 1, arrival_airport_id: 2, departure_time: new Date().toISOString(), price: 5500, total_seats: 180, available_seats: 180 },
             { id: 2, flight_number: 'SU-002', airline: 'Аэрофлот', departure_airport_id: 2, arrival_airport_id: 1, departure_time: new Date().toISOString(), price: 5500, total_seats: 180, available_seats: 145 },
@@ -269,14 +266,12 @@
         ];
 
 
-        // ============== INIT ==============
         document.addEventListener('DOMContentLoaded', () => {
             clearAllAuthFields();
             showAuthModal();
         });
 
 
-        // ============== AUTH ==============
         function clearAllAuthFields() {
             document.getElementById('login-email').value = '';
             document.getElementById('login-password').value = '';
@@ -348,7 +343,6 @@
         }
 
 
-        // ============== UI ==============
         function showAuthModal() {
             document.getElementById('auth-modal').classList.remove('hidden');
             document.getElementById('app').classList.add('hidden');
@@ -408,7 +402,6 @@
         }
 
 
-        // ============== ACCOUNT ==============
         function updateAccountTab() {
             if (!currentUser) return;
             document.getElementById('acc-name').textContent = currentUser.name;
@@ -419,7 +412,6 @@
         }
 
 
-        // ============== FLIGHTS ==============
         async function loadAllFlights() {
             try {
                 const res = await fetch(`${API_URL}/flights/`, { timeout: 2000 });
@@ -556,7 +548,6 @@
         }
 
 
-        // ============== AIRPORTS ==============
         async function loadAllAirports() {
             try {
                 const res = await fetch(`${API_URL}/flights/airports/`, { timeout: 2000 });
@@ -582,7 +573,7 @@
             }
             list.innerHTML = cachedAirports.map(a => {
                 let deleteBtn = '';
-                if (currentUser.role === 'admin') {
+                if (currentUser && currentUser.role === 'admin') {
                     deleteBtn = `<button class="btn-delete" onclick="deleteAirport(${a.id}, '${a.code}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>`;
                 }
                 return `
@@ -598,7 +589,7 @@
         }
 
         async function createAirport() {
-            if (currentUser.role !== 'admin') {
+            if (!currentUser || currentUser.role !== 'admin') {
                 notify('⚠️ Только администраторы могут создавать аэропорты', 'error');
                 return;
             }
@@ -643,7 +634,7 @@
         }
 
         async function deleteAirport(airportId, airportCode) {
-            if (currentUser.role !== 'admin') {
+            if (!currentUser || currentUser.role !== 'admin') {
                 notify('⚠️ Только администраторы могут удалять аэропорты', 'error');
                 return;
             }
@@ -672,7 +663,6 @@
         }
 
 
-        // ============== BOOKINGS ==============
         async function loadMyBookings() {
             try {
                 const res = await fetch(`${API_URL}/bookings/`, { timeout: 2000 });
@@ -698,7 +688,7 @@
             }
             list.innerHTML = cachedBookings.map(b => {
                 let deleteBtn = '';
-                if (currentUser.role === 'admin') {
+                if (currentUser && currentUser.role === 'admin') {
                     deleteBtn = `<button class="btn-delete" onclick="deleteBooking(${b.id}, '${b.booking_number || b.id}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>`;
                 }
                 return `
@@ -716,7 +706,7 @@
         }
 
         async function deleteBooking(bookingId, bookingNumber) {
-            if (currentUser.role !== 'admin') {
+            if (!currentUser || currentUser.role !== 'admin') {
                 notify('⚠️ Только администраторы могут удалять билеты', 'error');
                 return;
             }
