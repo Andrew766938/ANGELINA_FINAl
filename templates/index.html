@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ангелина - Авиабонирование</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .demo-data {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .demo-btn {
+            background: linear-gradient(135deg, #667eea 0%, #5568d3 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.25s;
+        }
+        .demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(102, 126, 234, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <h1>✈️ Ангелина</h1>
+        <div class="navbar-menu">
+            <button class="nav-btn active" onclick="switchTab(0)">🛫 РЕЙСЫ</button>
+            <button class="nav-btn" onclick="switchTab(1)">🏢 АЭРОПОРТЫ</button>
+            <button class="nav-btn" onclick="switchTab(2)">🎫 БИЛЕТЫ</button>
+            <button class="nav-btn logout" style="background: #f56565; border-color: #f56565; color: white;">🚪 ВЫХОД</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- НАГРУЗКА ПРИМЕРОВ -->
+        <div class="demo-data">
+            <h3>🔄 Загрузить Примеры</h3>
+            <button class="demo-btn" onclick="loadDemoAirports()">✅ Загрузить АЭропорты (16)</button>
+            <button class="demo-btn" onclick="loadDemoFlights()">✅ Загрузить Рейсы (16)</button>
+            <button class="demo-btn" onclick="loadDemoBookings()">✅ Загрузить Билеты (16)</button>
+        </div>
+
+        <!-- РЕЙСЫ -->
+        <div class="tab active">
+            <h2>🛫 РЕЙСЫ</h2>
+            <div class="cards-grid" id="flights-grid"></div>
+        </div>
+
+        <!-- АЭРОПОРТЫ -->
+        <div class="tab">
+            <h2>🏢 АЭРОПОРТЫ</h2>
+            <div class="cards-grid" id="airports-grid"></div>
+        </div>
+
+        <!-- БИЛЕТЫ -->
+        <div class="tab">
+            <h2>🎫 БИЛЕТЫ</h2>
+            <div class="cards-grid" id="bookings-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        // ДАННЫЕ ПРИМЕРОВ
+        const sampleAirports = [
+            { code: 'MOW', name: 'Шереметьево', city: 'Москва', country: 'Россия' },
+            { code: 'SPB', name: 'Пулково', city: 'Санкт-Петербург', country: 'Россия' },
+            { code: 'KZN', name: 'Казань', city: 'Казань', country: 'Россия' },
+            { code: 'SVX', name: 'Кольцово', city: 'Екатеринбург', country: 'Россия' },
+            { code: 'YKA', name: 'Площадь Ленина', city: 'Якутск', country: 'Россия' },
+            { code: 'LED', name: 'Пулково-2', city: 'Санкт-Петербург', country: 'Россия' },
+            { code: 'NOV', name: 'Новосибирск', city: 'Новосибирск', country: 'Россия' },
+            { code: 'VVO', name: 'Новый Владивосток', city: 'Владивосток', country: 'Россия' },
+            { code: 'OVB', name: 'Обь', city: 'Обь', country: 'Россия' },
+            { code: 'UUS', name: 'Южносахалинск', city: 'Южносахалинск', country: 'Россия' },
+            { code: 'TOE', name: 'Толяти', city: 'Толяти', country: 'Россия' },
+            { code: 'PEE', name: 'Пермь', city: 'Пермь', country: 'Россия' },
+            { code: 'TJM', name: 'Тюмень', city: 'Тюмень', country: 'Россия' },
+            { code: 'IGT', name: 'Иркутск', city: 'Иркутск', country: 'Россия' },
+            { code: 'ULY', name: 'Улан-Удэ', city: 'Улан-Удэ', country: 'Россия' },
+            { code: 'CHI', name: 'Чита', city: 'Чита', country: 'Россия' },
+        ];
+
+        const sampleFlights = [
+            { number: 'SU-001', airline: 'Аэрофлот', from: 'MOW', to: 'SPB', time: '08:00', seats: 180, price: 5500 },
+            { number: 'SU-002', airline: 'Аэрофлот', from: 'SPB', to: 'MOW', time: '12:00', seats: 145, price: 5500 },
+            { number: 'U6-100', airline: 'Уральские авиалинии', from: 'MOW', to: 'KZN', time: '10:30', seats: 150, price: 4800 },
+            { number: 'UT-50', airline: 'Ют-Аэр', from: 'KZN', to: 'SVX', time: '14:00', seats: 160, price: 6200 },
+            { number: 'S7-500', airline: 'S7 Авиалинии', from: 'SPB', to: 'SVX', time: '09:00', seats: 120, price: 7200 },
+            { number: 'SU-003', airline: 'Аэрофлот', from: 'MOW', to: 'YKA', time: '15:00', seats: 200, price: 8500 },
+            { number: 'FV-201', airline: 'Финир аэро', from: 'SVX', to: 'SPB', time: '11:00', seats: 140, price: 6800 },
+            { number: 'A4-400', airline: 'A4', from: 'MOW', to: 'LED', time: '07:00', seats: 190, price: 5200 },
+            { number: 'R2-102', airline: 'Русские авиалинии', from: 'SPB', to: 'KZN', time: '13:00', seats: 170, price: 5800 },
+            { number: 'FP-55', airline: 'Фламинго', from: 'KZN', to: 'MOW', time: '16:00', seats: 160, price: 5400 },
+            { number: 'N1-555', airline: 'Новые века', from: 'MOW', to: 'NOV', time: '06:00', seats: 210, price: 7800 },
+            { number: 'V1-888', airline: 'Высота', from: 'SPB', to: 'VVO', time: '10:00', seats: 140, price: 8200 },
+            { number: 'E3-200', airline: 'Экспресс', from: 'MOW', to: 'SVX', time: '18:00', seats: 150, price: 6500 },
+            { number: 'G5-777', airline: 'Галактика', from: 'KZN', to: 'SPB', time: '14:30', seats: 180, price: 5700 },
+            { number: 'T4-999', airline: 'Тандем', from: 'SVX', to: 'KZN', time: '19:00', seats: 120, price: 4200 },
+            { number: 'L7-333', airline: 'Луч', from: 'MOW', to: 'OVB', time: '05:00', seats: 200, price: 9200 },
+        ];
+
+        const sampleBookings = [
+            { number: 'BK-001', name: 'Иван Петров', flight: 'SU-001', status: 'Подтверждено', price: 5500 },
+            { number: 'BK-002', name: 'Мария Сидорова', flight: 'SU-002', status: 'Подтверждено', price: 5500 },
+            { number: 'BK-003', name: 'Алексей Иванов', flight: 'U6-100', status: 'Завершено', price: 4800 },
+            { number: 'BK-004', name: 'Елена Смирнова', flight: 'UT-50', status: 'Ожидание', price: 6200 },
+            { number: 'BK-005', name: 'Сергей Федоров', flight: 'S7-500', status: 'Подтверждено', price: 7200 },
+            { number: 'BK-006', name: 'Ольга Новикова', flight: 'SU-003', status: 'Подтверждено', price: 8500 },
+            { number: 'BK-007', name: 'Виктор Козлов', flight: 'FV-201', status: 'Завершено', price: 6800 },
+            { number: 'BK-008', name: 'Екатерина Волкова', flight: 'A4-400', status: 'Подтверждено', price: 5200 },
+            { number: 'BK-009', name: 'Максим Соколов', flight: 'R2-102', status: 'Ожидание', price: 5800 },
+            { number: 'BK-010', name: 'Наталья Степанова', flight: 'FP-55', status: 'Подтверждено', price: 5400 },
+            { number: 'BK-011', name: 'Павел Морозов', flight: 'N1-555', status: 'Завершено', price: 7800 },
+            { number: 'BK-012', name: 'Анна Буланова', flight: 'V1-888', status: 'Подтверждено', price: 8200 },
+            { number: 'BK-013', name: 'Дмитрий Петров', flight: 'E3-200', status: 'Ожидание', price: 6500 },
+            { number: 'BK-014', name: 'Валентина Соловьева', flight: 'G5-777', status: 'Подтверждено', price: 5700 },
+            { number: 'BK-015', name: 'Руслан Кузнецов', flight: 'T4-999', status: 'Завершено', price: 4200 },
+            { number: 'BK-016', name: 'Людмила Волохова', flight: 'L7-333', status: 'Подтверждено', price: 9200 },
+        ];
+
+        function switchTab(index) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach((b, i) => {
+                if (i < 3) b.classList.toggle('active', i === index);
+            });
+            document.querySelectorAll('.tab')[index].classList.add('active');
+        }
+
+        function loadDemoAirports() {
+            const grid = document.getElementById('airports-grid');
+            grid.innerHTML = sampleAirports.map(a => `
+                <div class="card">
+                    <h3>🏢 ${a.code}</h3>
+                    <p><strong>Название:</strong> ${a.name}</p>
+                    <p><strong>Город:</strong> ${a.city}</p>
+                    <p><strong>Страна:</strong> ${a.country}</p>
+                    <button class="btn btn-select" onclick="alert('Аэропорт ' + '${a.name}' + ' выбран')">✅ ВЫБРАТЬ</button>
+                </div>
+            `).join('');
+            switchTab(1);
+            alert('✅ 16 аэропортов загружено!');
+        }
+
+        function loadDemoFlights() {
+            const grid = document.getElementById('flights-grid');
+            grid.innerHTML = sampleFlights.map(f => `
+                <div class="card">
+                    <h3>🛫 ${f.number}</h3>
+                    <p><strong>Авиалиния:</strong> ${f.airline}</p>
+                    <p><strong>Маршрут:</strong> ${f.from} → ${f.to}</p>
+                    <p><strong>Вылет:</strong> ${f.time}</p>
+                    <p><strong>Мест:</strong> ${f.seats}</p>
+                    <p><strong>Цена:</strong> <span style="color: #667eea; font-weight: 700; font-size: 16px;">₽${f.price}</span></p>
+                    <button class="btn btn-select" onclick="bookFlight('${f.number}', ${f.price})">✅ ЗАБРОНИРОВАТЬ</button>
+                </div>
+            `).join('');
+            switchTab(0);
+            alert('✅ 16 рейсов загружено!');
+        }
+
+        function loadDemoBookings() {
+            const grid = document.getElementById('bookings-grid');
+            grid.innerHTML = sampleBookings.map(b => `
+                <div class="card">
+                    <h3>🎫 ${b.number}</h3>
+                    <p><strong>Пассажир:</strong> ${b.name}</p>
+                    <p><strong>Рейс:</strong> ${b.flight}</p>
+                    <p><strong>Сумма:</strong> <span style="color: #667eea; font-weight: 700; font-size: 16px;">₽${b.price}</span></p>
+                    <p><span class="badge ${b.status === 'Подтверждено' ? 'success' : b.status === 'Завершено' ? 'success' : 'pending'}">${b.status}</span></p>
+                    <button class="btn btn-select" onclick="alert('Билет ' + '${b.number}' + ' - ' + '${b.status}')">🎫 ПОДРОБНОСТИ</button>
+                </div>
+            `).join('');
+            switchTab(2);
+            alert('✅ 16 билетов загружено!');
+        }
+
+        function bookFlight(flightNumber, price) {
+            alert(`🛫 Кнопка "ЗАБРОНИРОВАТЬ" для рейса ${flightNumber} (₽${price}) - РАБОЧАЯ!`);
+        }
+
+        // Автолоад при открытии
+        window.addEventListener('load', () => {
+            loadDemoFlights();
+            loadDemoAirports();
+            loadDemoBookings();
+            document.getElementById('flights-grid').innerHTML = sampleFlights.map(f => `
+                <div class="card">
+                    <h3>🛫 ${f.number}</h3>
+                    <p><strong>Авиалиния:</strong> ${f.airline}</p>
+                    <p><strong>Маршрут:</strong> ${f.from} → ${f.to}</p>
+                    <p><strong>Вылет:</strong> ${f.time}</p>
+                    <p><strong>Мест:</strong> ${f.seats}</p>
+                    <p><strong>Цена:</strong> <span style="color: #667eea; font-weight: 700; font-size: 16px;">₽${f.price}</span></p>
+                    <button class="btn btn-select" onclick="bookFlight('${f.number}', ${f.price})">✅ ЗАБРОНИРОВАТЬ</button>
+                </div>
+            `).join('');
+        });
+    </script>
+</body>
+</html>
