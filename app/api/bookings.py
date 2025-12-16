@@ -4,7 +4,9 @@ from app.database.db_manager import get_db_session
 from app.services.booking_service import BookingService, PaymentService
 from app.schemes.bookings import BookingCreate, BookingRead, BookingListRead, PaymentRead, BookingUpdate
 import uuid
+import logging
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/bookings", tags=["bookings"])
 
 
@@ -14,10 +16,13 @@ async def get_all_bookings(
     db_session: AsyncSession = Depends(get_db_session),
 ):
     try:
+        logger.info("Fetching all bookings")
         service = BookingService(db_session)
         bookings = await service.get_all_bookings()
+        logger.info(f"Found {len(bookings)} bookings")
         return bookings
     except Exception as e:
+        logger.error(f"Error fetching bookings: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -28,14 +33,22 @@ async def create_booking(
     db_session: AsyncSession = Depends(get_db_session),
 ):
     try:
+        logger.info(f"Creating booking for flight {booking_data.flight_id}: {booking_data.passenger_name}")
+        
         service = BookingService(db_session)
         # Для демо используем фиксированный user_id или генерируем новый
         user_id = 1  # Демо пользователь
+        
         booking = await service.create_booking(user_id, booking_data)
+        
+        logger.info(f"Booking created successfully: {booking.booking_number}")
         return booking
+        
     except ValueError as e:
+        logger.warning(f"Validation error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        logger.error(f"Error creating booking: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -52,6 +65,7 @@ async def get_booking(
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
+        logger.error(f"Error getting booking: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -69,6 +83,7 @@ async def update_booking(
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
+        logger.error(f"Error updating booking: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -84,6 +99,7 @@ async def cancel_booking(
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
+        logger.error(f"Error cancelling booking: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -100,6 +116,7 @@ async def confirm_booking(
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
+        logger.error(f"Error confirming booking: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -121,6 +138,7 @@ async def create_payment(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        logger.error(f"Error creating payment: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -137,4 +155,5 @@ async def confirm_payment(
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
+        logger.error(f"Error confirming payment: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
