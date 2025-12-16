@@ -105,7 +105,7 @@
                         <input type="number" id="booking-seats" placeholder="Кол-во мест" min="1" value="1">
                     </div>
                     <button class="btn-primary" onclick="createBooking()">✅ БРОНИРОВАТЬ</button>
-                    <button class="btn-secondary" onclick="cancelBooking()" style="background: #e2e8f0; color: #718096; margin-top: 10px;">❌ Отмена</button>
+                    <button class="btn-secondary" onclick="clearBookingForm()" style="background: #e2e8f0; color: #718096; margin-top: 10px;">❌ Отмена</button>
                 </div>
                 
                 <div class="tabs-container">
@@ -490,7 +490,7 @@
             notify('✅ Рейс выбран. Заполните данные!', 'success');
         }
 
-        function cancelBooking() {
+        function clearBookingForm() {
             selectedFlightForBooking = null;
             document.getElementById('booking-flight-id').value = '';
             document.getElementById('booking-flight-info').textContent = '-';
@@ -499,7 +499,6 @@
             document.getElementById('booking-email').value = '';
             document.getElementById('booking-phone').value = '';
             document.getElementById('booking-seats').value = '1';
-            notify('❌ Бронирование отменено', 'error');
         }
 
         async function createBooking() {
@@ -533,7 +532,7 @@
                 if (res.ok) {
                     const booking = await res.json();
                     notify(`✅ Билет забронирован! №${booking.booking_number || flightId}`, 'success');
-                    cancelBooking();
+                    clearBookingForm();
                     await loadMyBookings();
                 } else {
                     const err = await res.json();
