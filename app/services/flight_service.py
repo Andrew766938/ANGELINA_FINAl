@@ -2,6 +2,9 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.repositories.flight_repository import FlightRepository, AirportRepository
 from app.schemes.flights import FlightCreate, FlightUpdate, AirportCreate
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class FlightService:
@@ -94,11 +97,17 @@ class AirportService:
         return await self.airport_repo.get_all_airports()
 
     async def create_airport(self, airport_data: AirportCreate):
+        logger.info(f"[AirportService] Attempting to create airport with code: {airport_data.code}")
+        
+        # Проверяем наличие аэропорта с таким кодом
         existing = await self.airport_repo.get_airport_by_code(airport_data.code)
         if existing:
+            logger.warning(f"[AirportService] Airport with code {airport_data.code} already exists (id: {existing.id})")
             raise ValueError(f"Airport with code {airport_data.code} already exists")
 
+        logger.info(f"[AirportService] Creating new airport: {airport_data.code} - {airport_data.name}")
         airport = await self.airport_repo.create_airport(airport_data.dict())
+        logger.info(f"[AirportService] Airport created successfully with id: {airport.id}")
         return airport
 
     async def update_airport(self, airport_id: int, airport_data: dict):
