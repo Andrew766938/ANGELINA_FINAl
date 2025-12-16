@@ -62,6 +62,23 @@ async def get_airport(
         raise HTTPException(status_code=500, detail="Error getting airport")
 
 
+@router.delete("/airports/{airport_id}", status_code=204)
+async def delete_airport(
+    airport_id: int, db_session: AsyncSession = Depends(get_db_session)
+):
+    try:
+        service = AirportService(db_session)
+        await service.delete_airport(airport_id)
+        await db_session.commit()
+    except ValueError as e:
+        logger.error(f"Airport not found: {str(e)}")
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error deleting airport: {str(e)}")
+        await db_session.rollback()
+        raise HTTPException(status_code=500, detail="Error deleting airport")
+
+
 # Рейсы (Flights)
 @router.post("/", response_model=FlightRead, status_code=201)
 async def create_flight(
