@@ -1,7 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, Field
 from app.models.booking import BookingStatus
-from app.schemes.flights import FlightListRead
 
 
 class BookingBase(BaseModel):
@@ -37,15 +36,13 @@ class BookingListRead(BaseModel):
     flight_id: int
     passenger_name: str
     passenger_email: str
+    passenger_phone: str
     seats_count: int
     total_price: float
     status: BookingStatus
-    booking_status: str = Field(alias="status")
-    flight: FlightListRead
 
     class Config:
         from_attributes = True
-        populate_by_name = True
 
 
 class PaymentCreate(BaseModel):
