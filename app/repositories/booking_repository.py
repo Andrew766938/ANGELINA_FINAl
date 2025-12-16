@@ -1,6 +1,9 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.booking import BookingModel, PaymentModel, BookingStatus
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class BookingRepository:
@@ -32,37 +35,61 @@ class BookingRepository:
         return result.scalars().all()
 
     async def get_all_bookings(self) -> list[BookingModel]:
+        logger.info("[BookingRepo] Fetching all bookings")
         result = await self.db_session.execute(select(BookingModel))
-        return result.scalars().all()
+        bookings = result.scalars().all()
+        logger.info(f"[BookingRepo] Found {len(bookings)} bookings")
+        return bookings
 
     async def create_booking(self, booking_data: dict) -> BookingModel:
-        booking = BookingModel(**booking_data)
-        self.db_session.add(booking)
-        await self.db_session.commit()
-        await self.db_session.refresh(booking)
-        return booking
+        logger.info(f"[BookingRepo] Creating booking with number {booking_data.get('booking_number')}")
+        try:
+            booking = BookingModel(**booking_data)
+            self.db_session.add(booking)
+            logger.info(f"[BookingRepo] Added booking to session")
+            
+            await self.db_session.flush()
+            logger.info(f"[BookingRepo] Flushed booking to database, ID: {booking.id}")
+            
+            await self.db_session.commit()
+            logger.info(f"[BookingRepo] Committed booking, ID: {booking.id}")
+            
+            await self.db_session.refresh(booking)
+            logger.info(f"[BookingRepo] Refreshed booking data")
+            
+            return booking
+        except Exception as e:
+            logger.error(f"[BookingRepo] Error creating booking: {str(e)}", exc_info=True)
+            await self.db_session.rollback()
+            raise
 
     async def update_booking(
         self, booking_id: int, booking_data: dict
     ) -> BookingModel | None:
+        logger.info(f"[BookingRepo] Updating booking {booking_id}")
         booking = await self.get_booking_by_id(booking_id)
         if booking:
             for key, value in booking_data.items():
                 if value is not None:
                     setattr(booking, key, value)
+            await self.db_session.flush()
             await self.db_session.commit()
             await self.db_session.refresh(booking)
+            logger.info(f"[BookingRepo] Updated booking {booking_id}")
         return booking
 
     async def delete_booking(self, booking_id: int) -> bool:
+        logger.info(f"[BookingRepo] Deleting booking {booking_id}")
         booking = await self.get_booking_by_id(booking_id)
         if booking:
             await self.db_session.delete(booking)
             await self.db_session.commit()
+            logger.info(f"[BookingRepo] Deleted booking {booking_id}")
             return True
         return False
 
     async def cancel_booking(self, booking_id: int) -> BookingModel | None:
+        logger.info(f"[BookingRepo] Cancelling booking {booking_id}")
         return await self.update_booking(booking_id, {"status": BookingStatus.CANCELLED})
 
 
@@ -91,20 +118,31 @@ class PaymentRepository:
         return result.scalars().first()
 
     async def create_payment(self, payment_data: dict) -> PaymentModel:
-        payment = PaymentModel(**payment_data)
-        self.db_session.add(payment)
-        await self.db_session.commit()
-        await self.db_session.refresh(payment)
-        return payment
+        logger.info(f"[PaymentRepo] Creating payment for booking {payment_data.get('booking_id')}")
+        try:
+            payment = PaymentModel(**payment_data)
+            self.db_session.add(payment)
+            await self.db_session.flush()
+            await self.db_session.commit()
+            await self.db_session.refresh(payment)
+            logger.info(f"[PaymentRepo] Payment created, ID: {payment.id}")
+            return payment
+        except Exception as e:
+            logger.error(f"[PaymentRepo] Error creating payment: {str(e)}", exc_info=True)
+            await self.db_session.rollback()
+            raise
 
     async def update_payment(
         self, payment_id: int, payment_data: dict
     ) -> PaymentModel | None:
+        logger.info(f"[PaymentRepo] Updating payment {payment_id}")
         payment = await self.get_payment_by_id(payment_id)
         if payment:
             for key, value in payment_data.items():
                 if value is not None:
                     setattr(payment, key, value)
+            await self.db_session.flush()
             await self.db_session.commit()
             await self.db_session.refresh(payment)
+            logger.info(f"[PaymentRepo] Updated payment {payment_id}")
         return payment
