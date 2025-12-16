@@ -14,53 +14,62 @@
                 <h1>✈️ Крылья</h1>
                 <p class="subtitle">Онлайн система бронирования авиабилетов</p>
                 
-                <!-- LOGIN FORM -->
-                <div id="login-form" class="auth-form active">
-                    <h2>Вход</h2>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="login-email" placeholder="demo@example.com" value="demo@example.com">
+                <div style="display: flex; gap: 30px;">
+                    <!-- LOGIN FORM -->
+                    <div id="login-form" class="auth-form active" style="flex: 1;">
+                        <h2>Вход</h2>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="login-email" placeholder="demo@example.com" value="demo@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Пароль</label>
+                            <input type="password" id="login-password" placeholder="demo123" value="demo123">
+                        </div>
+                        <button class="btn-auth" onclick="login()">🔓 ВОЙТИ</button>
+                        <p class="auth-link">Нет аккаунта? <a onclick="switchAuthForm()">Зарегистрироваться</a></p>
+                        
+                        <!-- Квик аккаунты -->
+                        <div style="margin-top: 20px; padding: 15px; background: #f7fafc; border-radius: 8px; border-left: 4px solid #48bb78;">
+                            <p style="margin: 0 0 10px 0; color: #2d3748; font-weight: 600;">🚀 Быстрые аккаунты:</p>
+                            <p style="margin: 5px 0; color: #4a5568; font-size: 12px;">
+                                <strong>👤 Пользователь:</strong><br>
+                                📧 user@example.com<br>
+                                🔐 user123
+                            </p>
+                            <p style="margin: 10px 0 5px 0; color: #4a5568; font-size: 12px;">
+                                <strong>👑 Администратор:</strong><br>
+                                📧 admin@example.com<br>
+                                🔐 admin123
+                            </p>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Пароль</label>
-                        <input type="password" id="login-password" placeholder="demo123" value="demo123">
-                    </div>
-                    <button class="btn-auth" onclick="login()">🔓 ВОЙТИ</button>
                     
-                    <!-- Быстрые кнопки входа -->
-                    <div style="margin-top: 20px; text-align: center;">
-                        <p style="color: #a0aec0; margin-bottom: 10px; font-size: 12px;">Быстрый вход</p>
-                        <button class="btn-secondary" onclick="quickLoginUser()" style="width: 48%; display: inline-block; margin-right: 4%;">👤 Пользователь</button>
-                        <button class="btn-secondary" onclick="quickLoginAdmin()" style="width: 48%; display: inline-block;">👑 Админ</button>
+                    <!-- REGISTER FORM -->
+                    <div id="register-form" class="auth-form" style="flex: 1;">
+                        <h2>Регистрация</h2>
+                        <div class="form-group">
+                            <label>ФИО</label>
+                            <input type="text" id="register-name" placeholder="Иван Иванов">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="register-email" placeholder="your@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Пароль</label>
+                            <input type="password" id="register-password" placeholder="Минимум 6 символов">
+                        </div>
+                        <div class="form-group">
+                            <label>Роль</label>
+                            <select id="register-role" class="role-select">
+                                <option value="user">👤 Пользователь</option>
+                                <option value="admin">👑 Администратор</option>
+                            </select>
+                        </div>
+                        <button class="btn-auth" onclick="register()">✍️ ЗАРЕГИСТРИРОВАТЬСЯ</button>
+                        <p class="auth-link">Уже есть аккаунт? <a onclick="switchAuthForm()">Войти</a></p>
                     </div>
-                    
-                    <p class="auth-link">Нет аккаунта? <a onclick="switchAuthForm()">Зарегистрироваться</a></p>
-                </div>
-                
-                <!-- REGISTER FORM -->
-                <div id="register-form" class="auth-form">
-                    <h2>Регистрация</h2>
-                    <div class="form-group">
-                        <label>ФИО</label>
-                        <input type="text" id="register-name" placeholder="Иван Иванов">
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="register-email" placeholder="your@email.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Пароль</label>
-                        <input type="password" id="register-password" placeholder="Минимум 6 символов">
-                    </div>
-                    <div class="form-group">
-                        <label>Роль</label>
-                        <select id="register-role" class="role-select">
-                            <option value="user">👤 Пользователь</option>
-                            <option value="admin">👑 Администратор</option>
-                        </select>
-                    </div>
-                    <button class="btn-auth" onclick="register()">✍️ ЗАРЕГИСТРИРОВАТЬСЯ</button>
-                    <p class="auth-link">Уже есть аккаунт? <a onclick="switchAuthForm()">Войти</a></p>
                 </div>
             </div>
         </div>
@@ -163,7 +172,7 @@
             <div id="bookings" class="tab">
                 <h2>🎫 Мои билеты</h2>
                 
-                <!-- Только список билетов, без возможности создания -->
+                <!-- Только список билетов -->
                 <div id="bookings-list" class="cards-grid"></div>
             </div>
 
@@ -209,7 +218,7 @@
         let cachedAirports = [];
         let cachedBookings = [];
 
-        // ========== СОСТОЯНИЕ ВКЛАДОК ==========
+        // ========== СОСтОЯНИЕ ВКЛАДОК ==========
         let currentFlightTab = 'all';
         let selectedFlightForBooking = null;
 
@@ -272,18 +281,6 @@
             document.getElementById('register-form').classList.toggle('active');
         }
 
-        function quickLoginUser() {
-            document.getElementById('login-email').value = 'demo@example.com';
-            document.getElementById('login-password').value = 'demo123';
-            login();
-        }
-
-        function quickLoginAdmin() {
-            document.getElementById('login-email').value = 'admin@example.com';
-            document.getElementById('login-password').value = 'admin123';
-            login();
-        }
-
         function login() {
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value.trim();
@@ -331,8 +328,8 @@
             cachedAirports = [];
             cachedBookings = [];
             showAuthModal();
-            document.getElementById('login-email').value = 'demo@example.com';
-            document.getElementById('login-password').value = 'demo123';
+            document.getElementById('login-email').value = 'user@example.com';
+            document.getElementById('login-password').value = 'user123';
             notify('✅ Вы вышли из аккаунта', 'success');
         }
 
@@ -645,26 +642,37 @@
                 list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">🎫 Вы ещё не бронировали билеты</div>';
                 return;
             }
-            list.innerHTML = cachedBookings.map(b => `
-                <div class="card">
-                    <h3>🎫 №${b.booking_number || b.id}</h3>
-                    <p><strong>👤 Пассажир:</strong> ${b.passenger_name}</p>
-                    <p><strong>📧 Email:</strong> ${b.passenger_email}</p>
-                    <p><strong>📱 Телефон:</strong> ${b.passenger_phone}</p>
-                    <p><strong>💺 Мест:</strong> ${b.seats_count || 1}</p>
-                    <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'pending'}</span></p>
-                    <button class="btn-delete" onclick="deleteBooking(${b.id}, '${b.booking_number || b.id}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>
-                </div>
-            `).join('');
+            list.innerHTML = cachedBookings.map(b => {
+                let deleteBtn = '';
+                if (currentUser.role === 'admin') {
+                    deleteBtn = `<button class="btn-delete" onclick="deleteBooking(${b.id}, '${b.booking_number || b.id}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>`;
+                }
+                return `
+                    <div class="card">
+                        <h3>🎫 №${b.booking_number || b.id}</h3>
+                        <p><strong>👤 Пассажир:</strong> ${b.passenger_name}</p>
+                        <p><strong>📧 Email:</strong> ${b.passenger_email}</p>
+                        <p><strong>📱 Телефон:</strong> ${b.passenger_phone}</p>
+                        <p><strong>💺 Мест:</strong> ${b.seats_count || 1}</p>
+                        <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'pending'}</span></p>
+                        ${deleteBtn}
+                    </div>
+                `;
+            }).join('');
         }
 
         async function deleteBooking(bookingId, bookingNumber) {
+            if (currentUser.role !== 'admin') {
+                notify('⚠️ Только администраторы могут удалять билеты', 'error');
+                return;
+            }
+            
             if (!confirm(`Вы уверены? Удалить билет ${bookingNumber}?`)) {
                 return;
             }
             
             try {
-                const res = await fetch(`${API_URL}/bookings/${bookingId}`, {
+                const res = await fetch(`${API_URL}/bookings/${bookingId}?is_admin=true`, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' }
                 });
