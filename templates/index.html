@@ -38,7 +38,7 @@
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" id="register-email" placeholder="your@email.com">
+                        <input type="email" id="register-email" placeholder="your@example.com">
                     </div>
                     <div class="form-group">
                         <label>Пароль</label>
@@ -353,10 +353,14 @@
             document.getElementById('auth-modal').classList.add('hidden');
             document.getElementById('app').classList.remove('hidden');
             updateAccountTab();
-            // АВТОЗАГРУЖКА ПРИМЕРОВ ПОГРУЖкА API, НО ЕСЛИ ОШИБКА - ПОКАЗАНО ДЕМО
-            loadFlightsWithFallback();
-            loadAirportsWithFallback();
-            loadBookingsWithFallback();
+            // СНАЧАЛА ПОКАЗЫВАЕМ DEMO данные, ТОгДА трыемся API
+            renderFlights(document.getElementById('flights-list'), DEMO_FLIGHTS);
+            renderAirports(document.getElementById('airports-list'), DEMO_AIRPORTS);
+            renderBookings(document.getElementById('bookings-list'), DEMO_BOOKINGS);
+            // Теперь трыемся апи, если есть - обновляем
+            loadFlightsFromAPI();
+            loadAirportsFromAPI();
+            loadBookingsFromAPI();
         }
 
         function switchMainTab(tabName) {
@@ -410,22 +414,16 @@
         }
 
         // ============== FLIGHTS ==============
-        async function loadFlightsWithFallback() {
-            const list = document.getElementById('flights-list');
+        async function loadFlightsFromAPI() {
             try {
                 const res = await fetch(`${API_URL}/flights/`, { timeout: 3000 });
-                if (!res.ok) throw new Error();
+                if (!res.ok) return;
                 const flights = await res.json();
                 if (flights && flights.length > 0) {
-                    renderFlights(list, flights);
-                    return;
+                    renderFlights(document.getElementById('flights-list'), flights);
+                    notify('✅ Рейсы загружены из API', 'success');
                 }
-            } catch (e) {
-                console.log('Ошибка API рейсов, показываю DEMO');
-            }
-            // FALLBACK к DEMO
-            renderFlights(list, DEMO_FLIGHTS);
-            notify('💫 данные с ПОМЕЩИ примеров (API недоступен)', 'warning');
+            } catch (e) {}
         }
 
         function renderFlights(list, flights) {
@@ -472,22 +470,16 @@
         }
 
         // ============== AIRPORTS ==============
-        async function loadAirportsWithFallback() {
-            const list = document.getElementById('airports-list');
+        async function loadAirportsFromAPI() {
             try {
                 const res = await fetch(`${API_URL}/flights/airports/`, { timeout: 3000 });
-                if (!res.ok) throw new Error();
+                if (!res.ok) return;
                 const airports = await res.json();
                 if (airports && airports.length > 0) {
-                    renderAirports(list, airports);
-                    return;
+                    renderAirports(document.getElementById('airports-list'), airports);
+                    notify('✅ Аэропорты загружены из API', 'success');
                 }
-            } catch (e) {
-                console.log('Ошибка API аэропортов, показываю DEMO');
-            }
-            // FALLBACK к DEMO
-            renderAirports(list, DEMO_AIRPORTS);
-            notify('💫 данные с ПОМЕЩИ примеров (API недоступен)', 'warning');
+            } catch (e) {}
         }
 
         function renderAirports(list, airports) {
@@ -522,7 +514,7 @@
                     document.getElementById('airport-name').value = '';
                     document.getElementById('airport-city').value = '';
                     document.getElementById('airport-country').value = '';
-                    setTimeout(() => loadAirportsWithFallback(), 500);
+                    setTimeout(() => loadAirportsFromAPI(), 500);
                 } else {
                     notify('❌ Ошибка', 'error');
                 }
@@ -532,22 +524,16 @@
         }
 
         // ============== BOOKINGS ==============
-        async function loadBookingsWithFallback() {
-            const list = document.getElementById('bookings-list');
+        async function loadBookingsFromAPI() {
             try {
                 const res = await fetch(`${API_URL}/bookings/`, { timeout: 3000 });
-                if (!res.ok) throw new Error();
+                if (!res.ok) return;
                 const bookings = await res.json();
                 if (bookings && bookings.length > 0) {
-                    renderBookings(list, bookings);
-                    return;
+                    renderBookings(document.getElementById('bookings-list'), bookings);
+                    notify('✅ Билеты загружены из API', 'success');
                 }
-            } catch (e) {
-                console.log('Ошибка API билетов, показываю DEMO');
-            }
-            // FALLBACK к DEMO
-            renderBookings(list, DEMO_BOOKINGS);
-            notify('💫 данные с ПОМЕЩИ примеров (API недоступен)', 'warning');
+            } catch (e) {}
         }
 
         function renderBookings(list, bookings) {
@@ -589,7 +575,7 @@
                     document.getElementById('booking-name').value = '';
                     document.getElementById('booking-email').value = '';
                     document.getElementById('booking-phone').value = '';
-                    setTimeout(() => loadBookingsWithFallback(), 500);
+                    setTimeout(() => loadBookingsFromAPI(), 500);
                 } else {
                     notify('❌ Ошибка бронирования', 'error');
                 }
