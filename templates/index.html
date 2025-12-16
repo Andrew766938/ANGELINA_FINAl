@@ -210,6 +210,64 @@
         const API_URL = 'http://localhost:8000';
         let currentUser = null;
 
+        // ========== ДЕМО-ДАННЫЕ (FALLBACK) ==========
+        const DEMO_FLIGHTS = [
+            { id: 1, flight_number: 'SU-001', airline: 'Аэрофлот', departure_airport_id: 1, arrival_airport_id: 2, departure_time: new Date().toISOString(), price: 5500, total_seats: 180, available_seats: 180 },
+            { id: 2, flight_number: 'SU-002', airline: 'Аэрофлот', departure_airport_id: 2, arrival_airport_id: 1, departure_time: new Date().toISOString(), price: 5500, total_seats: 180, available_seats: 145 },
+            { id: 3, flight_number: 'U6-100', airline: 'Уральские авиалинии', departure_airport_id: 1, arrival_airport_id: 3, departure_time: new Date().toISOString(), price: 4800, total_seats: 150, available_seats: 150 },
+            { id: 4, flight_number: 'UT-50', airline: 'Ют-Аэр', departure_airport_id: 3, arrival_airport_id: 4, departure_time: new Date().toISOString(), price: 6200, total_seats: 160, available_seats: 160 },
+            { id: 5, flight_number: 'S7-500', airline: 'S7 Авиалинии', departure_airport_id: 2, arrival_airport_id: 4, departure_time: new Date().toISOString(), price: 7200, total_seats: 120, available_seats: 120 },
+            { id: 6, flight_number: 'SU-003', airline: 'Аэрофлот', departure_airport_id: 1, arrival_airport_id: 5, departure_time: new Date().toISOString(), price: 8500, total_seats: 200, available_seats: 200 },
+            { id: 7, flight_number: 'FV-201', airline: 'Финир аэро', departure_airport_id: 4, arrival_airport_id: 2, departure_time: new Date().toISOString(), price: 6800, total_seats: 140, available_seats: 140 },
+            { id: 8, flight_number: 'A4-400', airline: 'A4', departure_airport_id: 1, arrival_airport_id: 6, departure_time: new Date().toISOString(), price: 5200, total_seats: 190, available_seats: 190 },
+            { id: 9, flight_number: 'R2-102', airline: 'Русские авиалинии', departure_airport_id: 2, arrival_airport_id: 3, departure_time: new Date().toISOString(), price: 5800, total_seats: 170, available_seats: 170 },
+            { id: 10, flight_number: 'FP-55', airline: 'Фламинго', departure_airport_id: 3, arrival_airport_id: 1, departure_time: new Date().toISOString(), price: 5400, total_seats: 160, available_seats: 160 },
+            { id: 11, flight_number: 'N1-555', airline: 'Новые века', departure_airport_id: 1, arrival_airport_id: 7, departure_time: new Date().toISOString(), price: 7800, total_seats: 210, available_seats: 210 },
+            { id: 12, flight_number: 'V1-888', airline: 'Высота', departure_airport_id: 2, arrival_airport_id: 8, departure_time: new Date().toISOString(), price: 8200, total_seats: 140, available_seats: 140 },
+            { id: 13, flight_number: 'E3-200', airline: 'Экспресс', departure_airport_id: 1, arrival_airport_id: 4, departure_time: new Date().toISOString(), price: 6500, total_seats: 150, available_seats: 150 },
+            { id: 14, flight_number: 'G5-777', airline: 'Галактика', departure_airport_id: 3, arrival_airport_id: 2, departure_time: new Date().toISOString(), price: 5700, total_seats: 180, available_seats: 180 },
+            { id: 15, flight_number: 'T4-999', airline: 'Тандем', departure_airport_id: 4, arrival_airport_id: 3, departure_time: new Date().toISOString(), price: 4200, total_seats: 120, available_seats: 120 },
+            { id: 16, flight_number: 'L7-333', airline: 'Луч', departure_airport_id: 1, arrival_airport_id: 9, departure_time: new Date().toISOString(), price: 9200, total_seats: 200, available_seats: 200 },
+        ];
+
+        const DEMO_AIRPORTS = [
+            { id: 1, code: 'MOW', name: 'Шереметьево', city: 'Москва', country: 'Россия' },
+            { id: 2, code: 'SPB', name: 'Пулково', city: 'Санкт-Петербург', country: 'Россия' },
+            { id: 3, code: 'KZN', name: 'Казань', city: 'Казань', country: 'Россия' },
+            { id: 4, code: 'SVX', name: 'Кольцово', city: 'Екатеринбург', country: 'Россия' },
+            { id: 5, code: 'YKA', name: 'Площадь Ленина', city: 'Якутск', country: 'Россия' },
+            { id: 6, code: 'LED', name: 'Пулково-2', city: 'Санкт-Петербург', country: 'Россия' },
+            { id: 7, code: 'NOV', name: 'Новосибирск', city: 'Новосибирск', country: 'Россия' },
+            { id: 8, code: 'VVO', name: 'Новый Владивосток', city: 'Владивосток', country: 'Россия' },
+            { id: 9, code: 'OVB', name: 'Обь', city: 'Обь', country: 'Россия' },
+            { id: 10, code: 'UUS', name: 'Южносахалинск', city: 'Южносахалинск', country: 'Россия' },
+            { id: 11, code: 'TOE', name: 'Толяти', city: 'Толяти', country: 'Россия' },
+            { id: 12, code: 'PEE', name: 'Пермь', city: 'Пермь', country: 'Россия' },
+            { id: 13, code: 'TJM', name: 'Тюмень', city: 'Тюмень', country: 'Россия' },
+            { id: 14, code: 'IGT', name: 'Иркутск', city: 'Иркутск', country: 'Россия' },
+            { id: 15, code: 'ULY', name: 'Улан-Удэ', city: 'Улан-Удэ', country: 'Россия' },
+            { id: 16, code: 'CHI', name: 'Чита', city: 'Чита', country: 'Россия' },
+        ];
+
+        const DEMO_BOOKINGS = [
+            { id: 1, booking_number: 'BK-001', passenger_name: 'Иван Петров', passenger_email: 'ivan@example.com', passenger_phone: '+7 999 111-00-01', status: 'ПОДТВЕРЖДЕНО' },
+            { id: 2, booking_number: 'BK-002', passenger_name: 'Мария Сидорова', passenger_email: 'maria@example.com', passenger_phone: '+7 999 222-00-02', status: 'ПОДТВЕРЖДЕНО' },
+            { id: 3, booking_number: 'BK-003', passenger_name: 'Алексей Иванов', passenger_email: 'alex@example.com', passenger_phone: '+7 999 333-00-03', status: 'ЗАВЕРШЕНО' },
+            { id: 4, booking_number: 'BK-004', passenger_name: 'Елена Смирнова', passenger_email: 'elena@example.com', passenger_phone: '+7 999 444-00-04', status: 'ОЖИДАНИЕ' },
+            { id: 5, booking_number: 'BK-005', passenger_name: 'Сергей Федоров', passenger_email: 'sergey@example.com', passenger_phone: '+7 999 555-00-05', status: 'ПОДТВЕРЖДЕНО' },
+            { id: 6, booking_number: 'BK-006', passenger_name: 'Ольга Новикова', passenger_email: 'olga@example.com', passenger_phone: '+7 999 666-00-06', status: 'ПОДТВЕРЖДЕНО' },
+            { id: 7, booking_number: 'BK-007', passenger_name: 'Виктор Козлов', passenger_email: 'victor@example.com', passenger_phone: '+7 999 777-00-07', status: 'ЗАВЕРШЕНО' },
+            { id: 8, booking_number: 'BK-008', passenger_name: 'Екатерина Волкова', passenger_email: 'kate@example.com', passenger_phone: '+7 999 888-00-08', status: 'ПОДТВЕРЖДЕНО' },
+            { id: 9, booking_number: 'BK-009', passenger_name: 'Максим Соколов', passenger_email: 'max@example.com', passenger_phone: '+7 999 900-00-09', status: 'ОЖИДАНИЕ' },
+            { id: 10, booking_number: 'BK-010', passenger_name: 'Наталья Степанова', passenger_email: 'nata@example.com', passenger_phone: '+7 999 101-00-10', status: 'ПОДТВЕРЖДЕНО' },
+            { id: 11, booking_number: 'BK-011', passenger_name: 'Павел Морозов', passenger_email: 'pavel@example.com', passenger_phone: '+7 999 202-00-11', status: 'ЗАВЕРШЕНО' },
+            { id: 12, booking_number: 'BK-012', passenger_name: 'Анна Буланова', passenger_email: 'anna@example.com', passenger_phone: '+7 999 303-00-12', status: 'ПОДТВЕРЖДЕНО' },
+            { id: 13, booking_number: 'BK-013', passenger_name: 'Дмитрий Петров', passenger_email: 'dmitry@example.com', passenger_phone: '+7 999 404-00-13', status: 'ОЖИДАНИЕ' },
+            { id: 14, booking_number: 'BK-014', passenger_name: 'Валентина Соловьева', passenger_email: 'val@example.com', passenger_phone: '+7 999 505-00-14', status: 'ПОДТВЕРЖДЕНО' },
+            { id: 15, booking_number: 'BK-015', passenger_name: 'Руслан Кузнецов', passenger_email: 'ruslan@example.com', passenger_phone: '+7 999 606-00-15', status: 'ЗАВЕРШЕНО' },
+            { id: 16, booking_number: 'BK-016', passenger_name: 'Людмила Волохова', passenger_email: 'lyuda@example.com', passenger_phone: '+7 999 707-00-16', status: 'ПОДТВЕРЖДЕНО' },
+        ];
+
         // ============== ИНИЦИАЛИЗАЦИЯ ==============
         document.addEventListener('DOMContentLoaded', () => {
             const saved = localStorage.getItem('user');
@@ -295,10 +353,10 @@
             document.getElementById('auth-modal').classList.add('hidden');
             document.getElementById('app').classList.remove('hidden');
             updateAccountTab();
-            // АВТОЗАГРУЗКА примеров при открытии приложения
-            loadAllFlights();
-            loadAllAirports();
-            loadMyBookings();
+            // АВТОЗАГРУЖКА ПРИМЕРОВ ПОГРУЖкА API, НО ЕСЛИ ОШИБКА - ПОКАЗАНО ДЕМО
+            loadFlightsWithFallback();
+            loadAirportsWithFallback();
+            loadBookingsWithFallback();
         }
 
         function switchMainTab(tabName) {
@@ -352,19 +410,22 @@
         }
 
         // ============== FLIGHTS ==============
-        async function loadAllFlights() {
+        async function loadFlightsWithFallback() {
             const list = document.getElementById('flights-list');
             try {
-                const res = await fetch(`${API_URL}/flights/`);
+                const res = await fetch(`${API_URL}/flights/`, { timeout: 3000 });
                 if (!res.ok) throw new Error();
                 const flights = await res.json();
-                if (!flights || flights.length === 0) throw new Error();
-                renderFlights(list, flights);
-                notify('✅ Рейсы загружены!', 'success');
-            } catch {
-                notify('❌ Ошибка загрузки рейсов', 'error');
-                list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">❌ Рейсы не найдены</div>';
+                if (flights && flights.length > 0) {
+                    renderFlights(list, flights);
+                    return;
+                }
+            } catch (e) {
+                console.log('Ошибка API рейсов, показываю DEMO');
             }
+            // FALLBACK к DEMO
+            renderFlights(list, DEMO_FLIGHTS);
+            notify('💫 данные с ПОМЕЩИ примеров (API недоступен)', 'warning');
         }
 
         function renderFlights(list, flights) {
@@ -411,19 +472,22 @@
         }
 
         // ============== AIRPORTS ==============
-        async function loadAllAirports() {
+        async function loadAirportsWithFallback() {
             const list = document.getElementById('airports-list');
             try {
-                const res = await fetch(`${API_URL}/flights/airports/`);
+                const res = await fetch(`${API_URL}/flights/airports/`, { timeout: 3000 });
                 if (!res.ok) throw new Error();
                 const airports = await res.json();
-                if (!airports || airports.length === 0) throw new Error();
-                renderAirports(list, airports);
-                notify('✅ Аэропорты загружены!', 'success');
-            } catch {
-                notify('❌ Ошибка загрузки аэропортов', 'error');
-                list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">🏢 Аэропорты не найдены</div>';
+                if (airports && airports.length > 0) {
+                    renderAirports(list, airports);
+                    return;
+                }
+            } catch (e) {
+                console.log('Ошибка API аэропортов, показываю DEMO');
             }
+            // FALLBACK к DEMO
+            renderAirports(list, DEMO_AIRPORTS);
+            notify('💫 данные с ПОМЕЩИ примеров (API недоступен)', 'warning');
         }
 
         function renderAirports(list, airports) {
@@ -458,7 +522,7 @@
                     document.getElementById('airport-name').value = '';
                     document.getElementById('airport-city').value = '';
                     document.getElementById('airport-country').value = '';
-                    setTimeout(() => loadAllAirports(), 500);
+                    setTimeout(() => loadAirportsWithFallback(), 500);
                 } else {
                     notify('❌ Ошибка', 'error');
                 }
@@ -468,19 +532,22 @@
         }
 
         // ============== BOOKINGS ==============
-        async function loadMyBookings() {
+        async function loadBookingsWithFallback() {
             const list = document.getElementById('bookings-list');
             try {
-                const res = await fetch(`${API_URL}/bookings/`);
+                const res = await fetch(`${API_URL}/bookings/`, { timeout: 3000 });
                 if (!res.ok) throw new Error();
                 const bookings = await res.json();
-                if (!bookings || bookings.length === 0) throw new Error();
-                renderBookings(list, bookings);
-                notify('✅ Билеты загружены!', 'success');
-            } catch {
-                notify('❌ Ошибка загрузки билетов', 'error');
-                list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">🎫 Вы ещё не бронировали билеты</div>';
+                if (bookings && bookings.length > 0) {
+                    renderBookings(list, bookings);
+                    return;
+                }
+            } catch (e) {
+                console.log('Ошибка API билетов, показываю DEMO');
             }
+            // FALLBACK к DEMO
+            renderBookings(list, DEMO_BOOKINGS);
+            notify('💫 данные с ПОМЕЩИ примеров (API недоступен)', 'warning');
         }
 
         function renderBookings(list, bookings) {
@@ -522,7 +589,7 @@
                     document.getElementById('booking-name').value = '';
                     document.getElementById('booking-email').value = '';
                     document.getElementById('booking-phone').value = '';
-                    setTimeout(() => loadMyBookings(), 500);
+                    setTimeout(() => loadBookingsWithFallback(), 500);
                 } else {
                     notify('❌ Ошибка бронирования', 'error');
                 }
