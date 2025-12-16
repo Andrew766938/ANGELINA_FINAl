@@ -25,9 +25,9 @@ class BookingModel(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     flight_id: Mapped[int] = mapped_column(ForeignKey("flights.id"), nullable=False)
     
-    passenger_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    passenger_email: Mapped[str] = mapped_column(String(100), nullable=False)
-    passenger_phone: Mapped[str] = mapped_column(String(20), nullable=False)
+    passenger_name: Mapped[str] = mapped_column(String(150), nullable=False)  # Increased from 100 to 150
+    passenger_email: Mapped[str] = mapped_column(String(150), nullable=False)  # Increased from 100 to 150
+    passenger_phone: Mapped[str] = mapped_column(String(50), nullable=False)  # Increased from 20 to 50
     
     seats_count: Mapped[int] = mapped_column(Integer, nullable=False)
     total_price: Mapped[float] = mapped_column(nullable=False)
