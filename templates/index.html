@@ -44,12 +44,16 @@
                         <label>Пароль</label>
                         <input type="password" id="register-password" placeholder="Минимум 6 символов">
                     </div>
+                    <div class="form-group">
+                        <label>Роль</label>
+                        <select id="register-role" class="role-select">
+                            <option value="user">👤 Пользователь</option>
+                            <option value="admin">👑 Администратор</option>
+                        </select>
+                    </div>
                     <button class="btn-auth" onclick="register()">✍️ ЗАРЕГИСТРИРОВАТЬСЯ</button>
                     <p class="auth-link">Уже есть аккаунт? <a onclick="switchAuthForm()">Войти</a></p>
                 </div>
-                
-                <div class="divider"><span>ИЛИ</span></div>
-                <button class="btn-guest" onclick="guestLogin()">👤 ГОСТЬ</button>
             </div>
         </div>
     </div>
@@ -107,6 +111,23 @@
             <!-- ============== AIRPORTS TAB ============== -->
             <div id="airports" class="tab">
                 <h2>🏢 Аэропорты</h2>
+                
+                <!-- Кнопка создания аэропорта (только для админов) -->
+                <div id="create-airport-section" style="display: none; margin-bottom: 20px;">
+                    <div class="form-card">
+                        <h3>➕ Создать новый аэропорт</h3>
+                        <div class="form-row">
+                            <input type="text" id="airport-code" placeholder="Код (например: MOW)">
+                            <input type="text" id="airport-name" placeholder="Название">
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="airport-city" placeholder="Город">
+                            <input type="text" id="airport-country" placeholder="Страна">
+                        </div>
+                        <button class="btn-primary" onclick="createAirport()">✅ СОЗДАТЬ</button>
+                    </div>
+                </div>
+                
                 <div id="airports-list" class="cards-grid"></div>
             </div>
 
@@ -115,38 +136,8 @@
             <div id="bookings" class="tab">
                 <h2>🎫 Мои билеты</h2>
                 
-                <div class="tabs-container">
-                    <button class="tab-btn active" onclick="switchBookingTab('list')">📋 Мои билеты</button>
-                    <button class="tab-btn" onclick="switchBookingTab('new')">🎟️ Забронировать</button>
-                </div>
-
-
-                <!-- My Bookings -->
-                <div id="booking-list-tab" class="tab active">
-                    <div id="bookings-list" class="cards-grid"></div>
-                </div>
-
-
-                <!-- New Booking -->
-                <div id="booking-new-tab" class="tab">
-                    <div class="form-card">
-                        <h3>🎟️ Забронировать билет</h3>
-                        <input type="hidden" id="booking-flight">
-                        <div id="selected-flight-info" style="display: none; background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                            <p style="margin: 0; color: #2d3748;"><strong>✈️ Выбранный рейс:</strong> <span id="selected-flight-number">-</span></p>
-                            <p style="margin: 5px 0 0 0; color: #718096;"><strong>Маршрут:</strong> <span id="selected-flight-route">-</span></p>
-                        </div>
-                        <div class="form-row">
-                            <input type="text" id="booking-name" placeholder="ФИО пассажира">
-                            <input type="email" id="booking-email" placeholder="Email">
-                        </div>
-                        <div class="form-row">
-                            <input type="tel" id="booking-phone" placeholder="Номер телефона">
-                            <input type="number" id="booking-seats" placeholder="Кол-во мест" min="1" value="1">
-                        </div>
-                        <button class="btn-primary" onclick="createBooking()">✅ ЗАБРОНИРОВАТЬ</button>
-                    </div>
-                </div>
+                <!-- Только список билетов, без возможности создания -->
+                <div id="bookings-list" class="cards-grid"></div>
             </div>
 
 
@@ -165,8 +156,8 @@
                         <span id="acc-email">-</span>
                     </p>
                     <p>
-                        <strong>Тип аккаунта:</strong>
-                        <span id="acc-type">-</span>
+                        <strong>Роль:</strong>
+                        <span id="acc-role">-</span>
                     </p>
                     <p>
                         <strong>Дата входа:</strong>
@@ -193,7 +184,6 @@
 
         // ========== СОСТОЯНИЕ ВКЛАДОК ==========
         let currentFlightTab = 'all';
-        let currentBookingTab = 'list';
         let selectedFlightForBooking = null;
 
         // ========== DEMO-ДАННЫЕ (FALLBACK) ==========
@@ -257,13 +247,8 @@
 
         // ============== INIT ==============
         document.addEventListener('DOMContentLoaded', () => {
-            const saved = localStorage.getItem('user');
-            if (saved) {
-                currentUser = JSON.parse(saved);
-                showApp();
-            } else {
-                showAuthModal();
-            }
+            // ВСЕГДА показываем окно регистрации при запуске
+            showAuthModal();
         });
 
 
@@ -281,13 +266,14 @@
                 notify('⚠️ Заполните все поля', 'error');
                 return;
             }
+            // Для демо определяем роль по email
+            const role = email.includes('admin') ? 'admin' : 'user';
             currentUser = {
                 name: email.split('@')[0],
                 email: email,
-                type: 'registered',
+                role: role,
                 loginTime: new Date().toLocaleString('ru-RU')
             };
-            localStorage.setItem('user', JSON.stringify(currentUser));
             showApp();
             notify('✅ Успешно вошли!', 'success');
         }
@@ -297,38 +283,26 @@
             const name = document.getElementById('register-name').value.trim();
             const email = document.getElementById('register-email').value.trim();
             const password = document.getElementById('register-password').value.trim();
+            const role = document.getElementById('register-role').value;
+            
             if (!name || !email || !password) {
                 notify('⚠️ Заполните все поля', 'error');
                 return;
             }
+            
             currentUser = {
                 name: name,
                 email: email,
-                type: 'registered',
+                role: role,
                 loginTime: new Date().toLocaleString('ru-RU')
             };
-            localStorage.setItem('user', JSON.stringify(currentUser));
             showApp();
-            notify('✅ Успешно зарегистрированы!', 'success');
-        }
-
-
-        function guestLogin() {
-            currentUser = {
-                name: 'Гость',
-                email: 'guest@example.com',
-                type: 'guest',
-                loginTime: new Date().toLocaleString('ru-RU')
-            };
-            localStorage.setItem('user', JSON.stringify(currentUser));
-            showApp();
-            notify('✅ Вошли как гость', 'success');
+            notify(`✅ Зарегистрированы как ${role === 'admin' ? 'Администратор' : 'Пользователь'}!`, 'success');
         }
 
 
         function logout() {
             currentUser = null;
-            localStorage.removeItem('user');
             cachedFlights = [];
             cachedAirports = [];
             cachedBookings = [];
@@ -351,7 +325,14 @@
             document.getElementById('app').classList.remove('hidden');
             updateAccountTab();
             
-            // ЗАГРУЖаем ВСЕ данные и кешируем
+            // Показываем/скрываем элементы в зависимости от роли
+            if (currentUser.role === 'admin') {
+                document.getElementById('create-airport-section').style.display = 'block';
+            } else {
+                document.getElementById('create-airport-section').style.display = 'none';
+            }
+            
+            // Загружаем данные
             await loadAllFlights();
             await loadAllAirports();
             await loadMyBookings();
@@ -363,7 +344,6 @@
             document.querySelectorAll('.nav-btn:not(.logout)').forEach(b => b.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             
-            // Активируем нужную кнопку в навбаре
             const btns = document.querySelectorAll('.nav-btn:not(.logout)');
             const tabMap = { flights: 0, airports: 1, bookings: 2, account: 3 };
             const idx = tabMap[tabName];
@@ -371,11 +351,8 @@
                 btns[idx].classList.add('active');
             }
             
-            // Восстанавливаем состояние вкладок
             if (tabName === 'flights') {
                 switchFlightTab(currentFlightTab);
-            } else if (tabName === 'bookings') {
-                switchBookingTab(currentBookingTab);
             }
         }
 
@@ -386,16 +363,6 @@
             document.getElementById('search-flights-tab').classList.toggle('active', tab === 'search');
             document.querySelectorAll('#flights .tab-btn').forEach((b, i) => {
                 b.classList.toggle('active', (i === 0 && tab === 'all') || (i === 1 && tab === 'search'));
-            });
-        }
-
-
-        function switchBookingTab(tab) {
-            currentBookingTab = tab;
-            document.getElementById('booking-list-tab').classList.toggle('active', tab === 'list');
-            document.getElementById('booking-new-tab').classList.toggle('active', tab === 'new');
-            document.querySelectorAll('#bookings .tab-btn').forEach((b, i) => {
-                b.classList.toggle('active', (i === 0 && tab === 'list') || (i === 1 && tab === 'new'));
             });
         }
 
@@ -413,7 +380,8 @@
             if (!currentUser) return;
             document.getElementById('acc-name').textContent = currentUser.name;
             document.getElementById('acc-email').textContent = currentUser.email;
-            document.getElementById('acc-type').textContent = currentUser.type === 'guest' ? '👤 Гость' : '✅ Зарегистрирован';
+            const roleText = currentUser.role === 'admin' ? '👑 Администратор' : '👤 Пользователь';
+            document.getElementById('acc-role').textContent = roleText;
             document.getElementById('acc-date').textContent = currentUser.loginTime;
         }
 
@@ -493,12 +461,7 @@
 
         function selectFlight(id, flightNumber, fromId, toId) {
             selectedFlightForBooking = { id, flightNumber, fromId, toId };
-            document.getElementById('booking-flight').value = id;
-            document.getElementById('selected-flight-number').textContent = flightNumber;
-            document.getElementById('selected-flight-route').textContent = `${fromId} ➡️ ${toId}`;
-            document.getElementById('selected-flight-info').style.display = 'block';
-            switchMainTab('bookings');
-            switchBookingTab('new');
+            notify(`✈️ Рейс ${flightNumber} выбран. Перейдите во вкладку "Рейсы" для бронирования.`, 'success');
         }
 
 
@@ -536,6 +499,46 @@
             `).join('');
         }
 
+        async function createAirport() {
+            if (currentUser.role !== 'admin') {
+                notify('⚠️ Только администраторы могут создавать аэропорты', 'error');
+                return;
+            }
+            
+            const code = document.getElementById('airport-code').value.trim();
+            const name = document.getElementById('airport-name').value.trim();
+            const city = document.getElementById('airport-city').value.trim();
+            const country = document.getElementById('airport-country').value.trim();
+            
+            if (!code || !name || !city || !country) {
+                notify('⚠️ Заполните все поля', 'error');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/flights/airports`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, name, city, country })
+                });
+                
+                if (res.ok) {
+                    notify('✅ Аэропорт создан!', 'success');
+                    document.getElementById('airport-code').value = '';
+                    document.getElementById('airport-name').value = '';
+                    document.getElementById('airport-city').value = '';
+                    document.getElementById('airport-country').value = '';
+                    await loadAllAirports();
+                } else {
+                    const err = await res.json();
+                    notify(`❌ ${err.detail || 'Ошибка создания'}`, 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                notify('❌ Ошибка подключения', 'error');
+            }
+        }
+
 
         // ============== BOOKINGS ==============
         async function loadMyBookings() {
@@ -571,56 +574,6 @@
                     <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'ПОДТВЕРЖДЕНО'}</span></p>
                 </div>
             `).join('');
-        }
-
-
-        async function createBooking() {
-            const flight = document.getElementById('booking-flight').value.trim();
-            const name = document.getElementById('booking-name').value.trim();
-            const email = document.getElementById('booking-email').value.trim();
-            const phone = document.getElementById('booking-phone').value.trim();
-            const seats = document.getElementById('booking-seats').value.trim() || '1';
-            
-            if (!flight) {
-                notify('⚠️ Сначала выберите рейс', 'error');
-                return;
-            }
-            if (!name || !email || !phone) {
-                notify('⚠️ Заполните ВСЕ поля', 'error');
-                return;
-            }
-            try {
-                const res = await fetch(`${API_URL}/bookings/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        flight_id: parseInt(flight),
-                        passenger_name: name,
-                        passenger_email: email,
-                        passenger_phone: phone,
-                        seats_count: parseInt(seats)
-                    })
-                });
-                if (res.ok) {
-                    const booking = await res.json();
-                    notify(`✅ Билет забронирован! №${booking.booking_number || flight}`, 'success');
-                    document.getElementById('booking-flight').value = '';
-                    document.getElementById('booking-name').value = '';
-                    document.getElementById('booking-email').value = '';
-                    document.getElementById('booking-phone').value = '';
-                    document.getElementById('booking-seats').value = '1';
-                    document.getElementById('selected-flight-info').style.display = 'none';
-                    selectedFlightForBooking = null;
-                    await loadMyBookings();
-                    switchBookingTab('list');
-                } else {
-                    const err = await res.json();
-                    notify(`❌ ${err.detail || 'Ошибка бронирования'}`, 'error');
-                }
-            } catch (e) {
-                console.error(e);
-                notify('❌ Ошибка подключения', 'error');
-            }
         }
     </script>
 </body>
