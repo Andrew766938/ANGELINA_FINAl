@@ -17,134 +17,6 @@ body {
     padding: 20px;
 }
 
-/* ============== АВТОРИЗАЦИЯ ==============  */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal.show-auth {
-    display: flex;
-}
-
-.auth-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.auth-box {
-    background: white;
-    border-radius: 20px;
-    padding: 50px;
-    width: 100%;
-    max-width: 450px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    animation: slideUp 0.4s ease;
-}
-
-.logo-auth {
-    text-align: center;
-    color: #667eea;
-    font-size: 32px;
-    margin-bottom: 10px;
-}
-
-.auth-form {
-    display: none;
-}
-
-.auth-form.active {
-    display: block;
-}
-
-.auth-form h2 {
-    color: #333;
-    margin-bottom: 25px;
-    text-align: center;
-    font-size: 24px;
-}
-
-.auth-form .form-group {
-    margin-bottom: 18px;
-}
-
-.auth-form input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.auth-form input:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.auth-form .btn {
-    width: 100%;
-    margin-top: 10px;
-}
-
-.auth-switch {
-    text-align: center;
-    margin-top: 20px;
-    color: #999;
-    font-size: 14px;
-}
-
-.auth-switch a {
-    color: #667eea;
-    text-decoration: none;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.auth-switch a:hover {
-    text-decoration: underline;
-}
-
-.demo-login {
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 30px;
-    border-top: 1px solid #e0e0e0;
-}
-
-.demo-login p {
-    color: #999;
-    margin-bottom: 15px;
-}
-
-.demo-login .btn {
-    width: 100%;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* ============== ГЛАВНОЕ ПРИЛОЖЕНИЕ ==============  */
 .navbar {
     background: white;
     border-radius: 15px;
@@ -158,29 +30,21 @@ body {
     gap: 20px;
 }
 
-.navbar-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.logo {
-    font-size: 28px;
-    font-weight: 700;
+.navbar-brand h1 {
     color: #667eea;
     margin: 0;
+    font-size: 28px;
 }
 
-.tagline {
-    font-size: 14px;
+.navbar-brand p {
     color: #999;
-    margin: 0;
+    margin: 5px 0 0 0;
+    font-size: 14px;
 }
 
 .navbar-menu {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
 }
 
 .nav-btn {
@@ -199,48 +63,21 @@ body {
 .nav-btn.active {
     background: #667eea;
     color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
-.btn-outline {
-    border: 2px solid #667eea;
-    background: white;
-    color: #667eea;
-    padding: 10px 20px;
-}
-
-.btn-outline:hover {
-    background: #667eea;
-    color: white;
-}
-
-/* Основное содержание */
-.main-content {
+.content {
     background: white;
     border-radius: 15px;
     padding: 30px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.tab-content {
+.tab {
     display: none;
-    animation: fadeIn 0.3s ease;
 }
 
-.tab-content.active {
+.tab.active {
     display: block;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 h2 {
@@ -251,25 +88,20 @@ h2 {
 
 h3 {
     color: #555;
-    margin-bottom: 20px;
-    margin-top: 30px;
-    font-size: 18px;
+    margin-bottom: 15px;
+    font-size: 16px;
 }
 
-/* Формы */
-.search-form,
-.booking-form,
-.form-grid {
+.search-form {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    position: relative;
 }
 
 .form-group label {
@@ -281,7 +113,7 @@ h3 {
 
 .form-group input,
 .form-group select {
-    padding: 12px 15px;
+    padding: 10px 12px;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     font-size: 14px;
@@ -293,271 +125,111 @@ h3 {
 .form-group select:focus {
     outline: none;
     border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.form-group input::placeholder {
-    color: #bbb;
-}
-
-/* Автокомплит списки */
-.airports-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    max-height: 200px;
-    overflow-y: auto;
-    display: none;
-    z-index: 100;
-    margin-top: 2px;
-}
-
-.airports-list.show {
-    display: block;
-}
-
-.airport-item {
-    padding: 12px 15px;
-    cursor: pointer;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background 0.2s ease;
-}
-
-.airport-item:hover {
-    background: #f8f9fa;
-    color: #667eea;
-}
-
-.airport-item-code {
-    font-weight: 700;
-    color: #667eea;
-}
-
-.airport-item-name {
-    font-size: 12px;
-    color: #999;
-    margin-top: 2px;
-}
-
-/* Кнопки */
-.btn {
-    padding: 12px 30px;
+.form-group button {
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
     border: none;
     border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
     cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
     transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    width: 100%;
+.form-group button:hover {
+    background: #764ba2;
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-}
-
-.btn-success {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    color: white;
-    width: 100%;
-}
-
-.btn-success:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(17, 153, 142, 0.4);
-}
-
-.btn-info {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    width: 100%;
-}
-
-.btn-info:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-    padding: 8px 16px;
-    font-size: 12px;
-    width: auto;
-}
-
-.btn-danger:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4);
-}
-
-.btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* Панели */
-.search-panel,
-.bookings-panel,
-.admin-panel,
-.my-bookings-panel {
+.form-card {
     background: #f8f9fa;
-    padding: 25px;
+    padding: 20px;
     border-radius: 12px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     border: 1px solid #e0e0e0;
 }
 
-.admin-section {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    border-left: 4px solid #667eea;
+.form-card input {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
 }
 
-/* Контейнеры */
-.flights-container,
-.bookings-container {
+.form-card button {
+    width: 100%;
+    padding: 12px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-card button:hover {
+    background: #764ba2;
+}
+
+.flights-list,
+.list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     margin-top: 20px;
 }
 
-/* Карточки */
-.flight-card,
-.booking-card {
+.card {
     background: white;
     border: 2px solid #e0e0e0;
     border-radius: 12px;
     padding: 20px;
     transition: all 0.3s ease;
-    cursor: pointer;
 }
 
-.flight-card:hover {
+.card:hover {
     border-color: #667eea;
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
     transform: translateY(-5px);
 }
 
-.flight-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.card h4 {
+    color: #667eea;
     margin-bottom: 15px;
-}
-
-.flight-header h3 {
-    color: #667eea;
-    margin: 0;
     font-size: 16px;
 }
 
-.airline {
-    background: #f0f0f0;
+.card p {
     color: #666;
-    padding: 4px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.flight-info {
-    margin: 15px 0;
-    padding: 12px 0;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.flight-info p {
-    margin: 6px 0;
     font-size: 14px;
-    color: #666;
-}
-
-.route {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 12px 0;
-    font-weight: 600;
-}
-
-.arrow {
-    margin: 0 10px;
-    color: #667eea;
-    font-size: 18px;
-}
-
-.times {
-    margin: 12px 0;
-}
-
-.times p {
     margin: 8px 0;
-    font-size: 13px;
+    line-height: 1.5;
 }
 
-.availability {
-    margin: 12px 0;
-}
-
-.availability p {
-    margin: 6px 0;
-}
-
-.availability strong {
-    color: #667eea;
-    font-size: 15px;
-}
-
-/* Статус бейджи */
-.status-badge {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
+.card button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
     font-weight: 600;
+    font-size: 14px;
 }
 
-.status-confirmed {
-    background: #d4edda;
-    color: #155724;
+.card button:hover {
+    background: #764ba2;
 }
 
-.status-pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-cancelled {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-/* Пустое состояние */
-.empty-state {
-    text-align: center;
-    color: #999;
-    padding: 40px 20px;
-    font-size: 16px;
-}
-
-/* Нотификации */
 .notification {
     position: fixed;
     top: 20px;
@@ -572,19 +244,20 @@ h3 {
     max-width: 400px;
 }
 
-.notification.show-success {
+.notification.show {
     display: block;
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
 }
 
-.notification.show-error {
-    display: block;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+.notification.success {
+    background: #11998e;
 }
 
-.notification.show-info {
-    display: block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.notification.error {
+    background: #f5576c;
+}
+
+.notification.info {
+    background: #667eea;
 }
 
 @keyframes slideIn {
@@ -598,100 +271,21 @@ h3 {
     }
 }
 
-/* Модальное окно */
-.modal {
-    position: fixed;
-    z-index: 999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: none;
-}
-
-.modal.show {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 600px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.close {
-    color: #999;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.close:hover {
-    color: #333;
-}
-
-/* Респонсивность */
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
-        text-align: center;
     }
     
-    .navbar-brand {
-        align-items: center;
-    }
-    
-    .search-form,
-    .booking-form,
-    .form-grid {
+    .search-form {
         grid-template-columns: 1fr;
     }
     
-    .flights-container,
-    .bookings-container {
+    .flights-list,
+    .list {
         grid-template-columns: 1fr;
     }
     
-    .logo {
-        font-size: 22px;
-    }
-    
-    .main-content {
+    .content {
         padding: 15px;
-    }
-    
-    .modal-content,
-    .auth-box {
-        width: 95%;
-        margin: auto;
-        max-width: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .navbar-menu {
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .nav-btn {
-        width: 100%;
-    }
-    
-    .flight-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .auth-box {
-        padding: 30px 20px;
     }
 }
