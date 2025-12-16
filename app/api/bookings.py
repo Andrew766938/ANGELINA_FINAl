@@ -1,159 +1,186 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.db_manager import get_db_session
-from app.services.booking_service import BookingService, PaymentService
-from app.schemes.bookings import BookingCreate, BookingRead, BookingListRead, PaymentRead, BookingUpdate
-import uuid
+from app.repositories.booking_repository import BookingRepository, PaymentRepository
+from app.repositories.flight_repository import FlightRepository
+from app.models.booking import BookingStatus, BookingModel
+from app.schemes.bookings import BookingCreate, BookingRead, BookingListRead
+import random
+import string
 import logging
+import traceback
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/bookings", tags=["bookings"])
 
 
-# Получить все бронирования (публичный доступ для демо)
+def generate_booking_number() -> str:
+    """Generate unique booking number"""
+    return "BK" + "".join(random.choices(string.digits, k=8))
+
+
 @router.get("/", response_model=list[BookingListRead])
 async def get_all_bookings(
     db_session: AsyncSession = Depends(get_db_session),
 ):
+    """Get all bookings"""
     try:
-        logger.info("Fetching all bookings")
-        service = BookingService(db_session)
-        bookings = await service.get_all_bookings()
-        logger.info(f"Found {len(bookings)} bookings")
+        logger.info("[API] GET /bookings/ - Fetching all bookings")
+        booking_repo = BookingRepository(db_session)
+        bookings = await booking_repo.get_all_bookings()
+        logger.info(f"[API] GET /bookings/ - Found {len(bookings)} bookings")
         return bookings
     except Exception as e:
-        logger.error(f"Error fetching bookings: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"[API] GET /bookings/ - Error: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error fetching bookings: {str(e)}")
 
 
-# Создать бронирование (публичный доступ для демо)
 @router.post("/", response_model=BookingRead, status_code=201)
 async def create_booking(
     booking_data: BookingCreate,
     db_session: AsyncSession = Depends(get_db_session),
 ):
+    """Create a new booking"""
+    full_traceback = ""
     try:
-        logger.info(f"Creating booking for flight {booking_data.flight_id}: {booking_data.passenger_name}")
+        logger.info(f"[API] POST /bookings/ - Starting booking creation")
+        logger.info(f"[API] Request data: flight_id={booking_data.flight_id}, passenger={booking_data.passenger_name}, seats={booking_data.seats_count}")
         
-        service = BookingService(db_session)
-        # Для демо используем фиксированный user_id или генерируем новый
-        user_id = 1  # Демо пользователь
+        # Initialize repositories
+        booking_repo = BookingRepository(db_session)
+        flight_repo = FlightRepository(db_session)
         
-        booking = await service.create_booking(user_id, booking_data)
+        # Validate flight exists
+        logger.info(f"[API] Checking if flight {booking_data.flight_id} exists")
+        flight = await flight_repo.get_flight_by_id(booking_data.flight_id)
+        if not flight:
+            logger.error(f"[API] Flight {booking_data.flight_id} not found")
+            raise ValueError(f"Flight with id {booking_data.flight_id} not found")
         
-        logger.info(f"Booking created successfully: {booking.booking_number}")
+        logger.info(f"[API] Flight found: {flight.flight_number}, available seats: {flight.available_seats}")
+        
+        # Validate available seats
+        if flight.available_seats < booking_data.seats_count:
+            logger.error(f"[API] Not enough seats: available={flight.available_seats}, requested={booking_data.seats_count}")
+            raise ValueError(
+                f"Not enough available seats. Available: {flight.available_seats}, Requested: {booking_data.seats_count}"
+            )
+        
+        # Calculate total price
+        total_price = flight.price * booking_data.seats_count
+        logger.info(f"[API] Total price calculated: {total_price} (price per seat: {flight.price})")
+        
+        # Generate booking number
+        booking_number = generate_booking_number()
+        logger.info(f"[API] Generated booking number: {booking_number}")
+        
+        # Prepare booking data
+        booking_dict = {
+            "user_id": 1,  # Demo user
+            "flight_id": booking_data.flight_id,
+            "booking_number": booking_number,
+            "passenger_name": booking_data.passenger_name,
+            "passenger_email": booking_data.passenger_email,
+            "passenger_phone": booking_data.passenger_phone,
+            "seats_count": booking_data.seats_count,
+            "total_price": total_price,
+            "status": BookingStatus.PENDING,
+        }
+        
+        logger.info(f"[API] Creating booking in database with: {booking_dict}")
+        
+        # Create booking
+        booking = await booking_repo.create_booking(booking_dict)
+        logger.info(f"[API] Booking created successfully: id={booking.id}, number={booking.booking_number}")
+        
+        # Update flight available seats
+        logger.info(f"[API] Updating flight {booking_data.flight_id} available seats from {flight.available_seats} to {flight.available_seats - booking_data.seats_count}")
+        updated_flight = await flight_repo.update_flight(
+            booking_data.flight_id,
+            {"available_seats": flight.available_seats - booking_data.seats_count},
+        )
+        logger.info(f"[API] Flight updated successfully")
+        
+        logger.info(f"[API] POST /bookings/ - Booking created successfully: {booking.booking_number}")
         return booking
         
     except ValueError as e:
-        logger.warning(f"Validation error: {str(e)}")
+        logger.warning(f"[API] POST /bookings/ - Validation error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        logger.error(f"Error creating booking: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+        full_traceback = traceback.format_exc()
+        logger.error(f"[API] POST /bookings/ - Unexpected error: {str(e)}")
+        logger.error(f"[API] Full traceback:\n{full_traceback}")
+        raise HTTPException(status_code=500, detail=f"Error creating booking: {str(e)}")
 
 
-# Получить бронирование по ID
 @router.get("/{booking_id}", response_model=BookingRead)
 async def get_booking(
     booking_id: int,
     db_session: AsyncSession = Depends(get_db_session),
 ):
+    """Get booking by ID"""
     try:
-        service = BookingService(db_session)
-        booking = await service.get_booking(booking_id)
+        logger.info(f"[API] GET /bookings/{booking_id}")
+        booking_repo = BookingRepository(db_session)
+        booking = await booking_repo.get_booking_by_id(booking_id)
+        if not booking:
+            logger.error(f"[API] Booking {booking_id} not found")
+            raise HTTPException(status_code=404, detail=f"Booking with id {booking_id} not found")
         return booking
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        logger.error(f"Error getting booking: {str(e)}")
+        logger.error(f"[API] GET /bookings/{booking_id} - Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# Обновить статус бронирования
 @router.put("/{booking_id}", response_model=BookingRead)
-async def update_booking(
+async def update_booking_status(
     booking_id: int,
-    booking_update: BookingUpdate,
+    status: str,
     db_session: AsyncSession = Depends(get_db_session),
 ):
+    """Update booking status"""
     try:
-        service = BookingService(db_session)
-        booking = await service.update_booking(booking_id, booking_update)
+        logger.info(f"[API] PUT /bookings/{booking_id} - Updating status to {status}")
+        booking_repo = BookingRepository(db_session)
+        booking = await booking_repo.update_booking(booking_id, {"status": status})
+        if not booking:
+            logger.error(f"[API] Booking {booking_id} not found")
+            raise HTTPException(status_code=404, detail=f"Booking with id {booking_id} not found")
+        logger.info(f"[API] Booking {booking_id} updated")
         return booking
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        logger.error(f"Error updating booking: {str(e)}")
+        logger.error(f"[API] PUT /bookings/{booking_id} - Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# Отменить бронирование
 @router.delete("/{booking_id}", status_code=204)
 async def cancel_booking(
     booking_id: int,
     db_session: AsyncSession = Depends(get_db_session),
 ):
+    """Cancel booking"""
     try:
-        service = BookingService(db_session)
-        await service.cancel_booking(booking_id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        logger.error(f"Error cancelling booking: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# Подтвердить бронирование
-@router.post("/{booking_id}/confirm", response_model=BookingRead)
-async def confirm_booking(
-    booking_id: int,
-    db_session: AsyncSession = Depends(get_db_session),
-):
-    try:
-        service = BookingService(db_session)
-        booking = await service.confirm_booking(booking_id)
-        return booking
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        logger.error(f"Error confirming booking: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# Создать платеж
-@router.post("/{booking_id}/payment", response_model=PaymentRead, status_code=201)
-async def create_payment(
-    booking_id: int,
-    payment_data: dict,
-    db_session: AsyncSession = Depends(get_db_session),
-):
-    try:
-        service = BookingService(db_session)
-        booking = await service.get_booking(booking_id)
+        logger.info(f"[API] DELETE /bookings/{booking_id} - Cancelling booking")
+        booking_repo = BookingRepository(db_session)
+        flight_repo = FlightRepository(db_session)
         
-        payment_service = PaymentService(db_session)
-        payment_data["transaction_id"] = str(uuid.uuid4())
-        payment = await payment_service.create_payment(booking_id, payment_data)
-        return payment
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        booking = await booking_repo.get_booking_by_id(booking_id)
+        if not booking:
+            logger.error(f"[API] Booking {booking_id} not found")
+            raise HTTPException(status_code=404, detail=f"Booking with id {booking_id} not found")
+        
+        # Return seats to flight
+        flight = await flight_repo.get_flight_by_id(booking.flight_id)
+        await flight_repo.update_flight(
+            booking.flight_id,
+            {"available_seats": flight.available_seats + booking.seats_count}
+        )
+        
+        # Cancel booking
+        await booking_repo.cancel_booking(booking_id)
+        logger.info(f"[API] Booking {booking_id} cancelled")
+        
     except Exception as e:
-        logger.error(f"Error creating payment: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# Подтвердить платеж
-@router.post("/payment/{payment_id}/confirm", response_model=PaymentRead)
-async def confirm_payment(
-    payment_id: int,
-    db_session: AsyncSession = Depends(get_db_session),
-):
-    try:
-        payment_service = PaymentService(db_session)
-        payment = await payment_service.confirm_payment(payment_id)
-        return payment
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        logger.error(f"Error confirming payment: {str(e)}")
+        logger.error(f"[API] DELETE /bookings/{booking_id} - Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
