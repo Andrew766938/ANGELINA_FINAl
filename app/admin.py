@@ -123,11 +123,11 @@ def setup_admin(app):
         logo_url="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='70' font-size='80' text-anchor='middle'%3E✈️%3C/text%3E%3C/svg%3E"
     )
     
-    # Регистрируем все админ-модели
-    admin.register_model(UserAdmin)
-    admin.register_model(RoleAdmin)
-    admin.register_model(FlightAdmin)
-    admin.register_model(AirportAdmin)
-    admin.register_model(BookingAdmin)
+    # Регистрируем все админ-модели (в SQLAdmin 0.22+ используется add_view)
+    admin.add_view(UserAdmin)
+    admin.add_view(RoleAdmin)
+    admin.add_view(FlightAdmin)
+    admin.add_view(AirportAdmin)
+    admin.add_view(BookingAdmin)
     
     return admin
