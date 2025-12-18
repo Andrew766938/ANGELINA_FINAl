@@ -1,0 +1,5 @@
+# SQLAdmin - Admin panel for FastAPI
+sqladmin==0.18.3
+
+# Dependencies
+Werkzeug==3.0.1
