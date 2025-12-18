@@ -6,8 +6,7 @@ from sqladmin import Admin, ModelView
 from app.config import settings
 from app.models.users import UserModel
 from app.models.roles import RoleModel
-from app.models.flight import FlightModel
-from app.models.airport import AirportModel
+from app.models.flight import FlightModel, AirportModel
 from app.models.booking import BookingModel
 
 
