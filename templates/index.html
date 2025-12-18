@@ -26,7 +26,7 @@
                             <label>Пароль</label>
                             <input type="password" id="login-password" placeholder="user123">
                         </div>
-                        <button class="btn-auth" onclick="login()">🔓 ВОЙТИ</button>
+                        <button class="btn-auth" onclick="login()">🔐 ВОЙТИ</button>
                         <p class="auth-link">Нет аккаунта? <a onclick="switchAuthForm()">Зарегистрироваться</a></p>
                         
                         <!-- Квик аккаунты -->
@@ -113,7 +113,7 @@
                         <input type="tel" id="booking-phone" placeholder="Номер телефона">
                         <input type="number" id="booking-seats" placeholder="Кол-во мест" min="1" value="1">
                     </div>
-                    <button class="btn-primary" onclick="createBooking()">✅ БРОНИРОВАТЬ</button>
+                    <button class="btn-primary" onclick="createBooking()">✅ ЗАБРОНИРОВАТЬ</button>
                     <button class="btn-secondary" onclick="clearBookingForm()" style="background: #e2e8f0; color: #718096; margin-top: 10px;">❌ Отмена</button>
                 </div>
                 
@@ -253,22 +253,22 @@
         ];
 
         const DEMO_BOOKINGS = [
-            { id: 1, booking_number: 'BK-001', passenger_name: 'Иван Петров', passenger_email: 'ivan@example.com', passenger_phone: '+7 999 111-00-01', seats_count: 1, total_price: 5500, status: 'confirmed', flight_id: 1, flight: DEMO_FLIGHTS[0] },
-            { id: 2, booking_number: 'BK-002', passenger_name: 'Мария Сидорова', passenger_email: 'maria@example.com', passenger_phone: '+7 999 222-00-02', seats_count: 2, total_price: 11000, status: 'confirmed', flight_id: 2, flight: DEMO_FLIGHTS[1] },
-            { id: 3, booking_number: 'BK-003', passenger_name: 'Алексей Иванов', passenger_email: 'alex@example.com', passenger_phone: '+7 999 333-00-03', seats_count: 1, total_price: 4800, status: 'completed', flight_id: 3, flight: DEMO_FLIGHTS[2] },
-            { id: 4, booking_number: 'BK-004', passenger_name: 'Елена Смирнова', passenger_email: 'elena@example.com', passenger_phone: '+7 999 444-00-04', seats_count: 1, total_price: 6200, status: 'pending', flight_id: 4, flight: DEMO_FLIGHTS[3] },
-            { id: 5, booking_number: 'BK-005', passenger_name: 'Сергей Федоров', passenger_email: 'sergey@example.com', passenger_phone: '+7 999 555-00-05', seats_count: 1, total_price: 7200, status: 'confirmed', flight_id: 5, flight: DEMO_FLIGHTS[4] },
-            { id: 6, booking_number: 'BK-006', passenger_name: 'Ольга Новикова', passenger_email: 'olga@example.com', passenger_phone: '+7 999 666-00-06', seats_count: 3, total_price: 25500, status: 'confirmed', flight_id: 6, flight: DEMO_FLIGHTS[5] },
-            { id: 7, booking_number: 'BK-007', passenger_name: 'Виктор Козлов', passenger_email: 'victor@example.com', passenger_phone: '+7 999 777-00-07', seats_count: 1, total_price: 6800, status: 'completed', flight_id: 7, flight: DEMO_FLIGHTS[6] },
-            { id: 8, booking_number: 'BK-008', passenger_name: 'Екатерина Волкова', passenger_email: 'kate@example.com', passenger_phone: '+7 999 888-00-08', seats_count: 1, total_price: 5200, status: 'confirmed', flight_id: 8, flight: DEMO_FLIGHTS[7] },
-            { id: 9, booking_number: 'BK-009', passenger_name: 'Максим Соколов', passenger_email: 'max@example.com', passenger_phone: '+7 999 900-00-09', seats_count: 2, total_price: 11600, status: 'pending', flight_id: 9, flight: DEMO_FLIGHTS[8] },
-            { id: 10, booking_number: 'BK-010', passenger_name: 'Наталья Степанова', passenger_email: 'nata@example.com', passenger_phone: '+7 999 101-00-10', seats_count: 1, total_price: 5400, status: 'confirmed', flight_id: 10, flight: DEMO_FLIGHTS[9] },
-            { id: 11, booking_number: 'BK-011', passenger_name: 'Павел Морозов', passenger_email: 'pavel@example.com', passenger_phone: '+7 999 202-00-11', seats_count: 1, total_price: 7800, status: 'completed', flight_id: 11, flight: DEMO_FLIGHTS[10] },
-            { id: 12, booking_number: 'BK-012', passenger_name: 'Анна Буланова', passenger_email: 'anna@example.com', passenger_phone: '+7 999 303-00-12', seats_count: 1, total_price: 8200, status: 'confirmed', flight_id: 12, flight: DEMO_FLIGHTS[11] },
-            { id: 13, booking_number: 'BK-013', passenger_name: 'Дмитрий Петров', passenger_email: 'dmitry@example.com', passenger_phone: '+7 999 404-00-13', seats_count: 1, total_price: 6500, status: 'pending', flight_id: 13, flight: DEMO_FLIGHTS[12] },
-            { id: 14, booking_number: 'BK-014', passenger_name: 'Валентина Соловьева', passenger_email: 'val@example.com', passenger_phone: '+7 999 505-00-14', seats_count: 2, total_price: 11400, status: 'confirmed', flight_id: 14, flight: DEMO_FLIGHTS[13] },
-            { id: 15, booking_number: 'BK-015', passenger_name: 'Руслан Кузнецов', passenger_email: 'ruslan@example.com', passenger_phone: '+7 999 606-00-15', seats_count: 1, total_price: 4200, status: 'completed', flight_id: 15, flight: DEMO_FLIGHTS[14] },
-            { id: 16, booking_number: 'BK-016', passenger_name: 'Людмила Волохова', passenger_email: 'lyuda@example.com', passenger_phone: '+7 999 707-00-16', seats_count: 1, total_price: 9200, status: 'confirmed', flight_id: 16, flight: DEMO_FLIGHTS[15] },
+            { id: 1, booking_number: 'BK-001', flight_id: 1, passenger_name: 'Иван Петров', passenger_email: 'ivan@example.com', passenger_phone: '+7 999 111-00-01', seats_count: 1, total_price: 5500, status: 'confirmed' },
+            { id: 2, booking_number: 'BK-002', flight_id: 2, passenger_name: 'Мария Сидорова', passenger_email: 'maria@example.com', passenger_phone: '+7 999 222-00-02', seats_count: 2, total_price: 11000, status: 'confirmed' },
+            { id: 3, booking_number: 'BK-003', flight_id: 3, passenger_name: 'Алексей Иванов', passenger_email: 'alex@example.com', passenger_phone: '+7 999 333-00-03', seats_count: 1, total_price: 4800, status: 'completed' },
+            { id: 4, booking_number: 'BK-004', flight_id: 4, passenger_name: 'Елена Смирнова', passenger_email: 'elena@example.com', passenger_phone: '+7 999 444-00-04', seats_count: 1, total_price: 6200, status: 'pending' },
+            { id: 5, booking_number: 'BK-005', flight_id: 5, passenger_name: 'Сергей Федоров', passenger_email: 'sergey@example.com', passenger_phone: '+7 999 555-00-05', seats_count: 1, total_price: 7200, status: 'confirmed' },
+            { id: 6, booking_number: 'BK-006', flight_id: 6, passenger_name: 'Ольга Новикова', passenger_email: 'olga@example.com', passenger_phone: '+7 999 666-00-06', seats_count: 3, total_price: 25500, status: 'confirmed' },
+            { id: 7, booking_number: 'BK-007', flight_id: 7, passenger_name: 'Виктор Козлов', passenger_email: 'victor@example.com', passenger_phone: '+7 999 777-00-07', seats_count: 1, total_price: 6800, status: 'completed' },
+            { id: 8, booking_number: 'BK-008', flight_id: 8, passenger_name: 'Екатерина Волкова', passenger_email: 'kate@example.com', passenger_phone: '+7 999 888-00-08', seats_count: 1, total_price: 5200, status: 'confirmed' },
+            { id: 9, booking_number: 'BK-009', flight_id: 9, passenger_name: 'Максим Соколов', passenger_email: 'max@example.com', passenger_phone: '+7 999 900-00-09', seats_count: 2, total_price: 11600, status: 'pending' },
+            { id: 10, booking_number: 'BK-010', flight_id: 10, passenger_name: 'Наталья Степанова', passenger_email: 'nata@example.com', passenger_phone: '+7 999 101-00-10', seats_count: 1, total_price: 5400, status: 'confirmed' },
+            { id: 11, booking_number: 'BK-011', flight_id: 11, passenger_name: 'Павел Морозов', passenger_email: 'pavel@example.com', passenger_phone: '+7 999 202-00-11', seats_count: 1, total_price: 7800, status: 'completed' },
+            { id: 12, booking_number: 'BK-012', flight_id: 12, passenger_name: 'Анна Буланова', passenger_email: 'anna@example.com', passenger_phone: '+7 999 303-00-12', seats_count: 1, total_price: 8200, status: 'confirmed' },
+            { id: 13, booking_number: 'BK-013', flight_id: 13, passenger_name: 'Дмитрий Петров', passenger_email: 'dmitry@example.com', passenger_phone: '+7 999 404-00-13', seats_count: 1, total_price: 6500, status: 'pending' },
+            { id: 14, booking_number: 'BK-014', flight_id: 14, passenger_name: 'Валентина Соловьева', passenger_email: 'val@example.com', passenger_phone: '+7 999 505-00-14', seats_count: 2, total_price: 11400, status: 'confirmed' },
+            { id: 15, booking_number: 'BK-015', flight_id: 15, passenger_name: 'Руслан Кузнецов', passenger_email: 'ruslan@example.com', passenger_phone: '+7 999 606-00-15', seats_count: 1, total_price: 4200, status: 'completed' },
+            { id: 16, booking_number: 'BK-016', flight_id: 16, passenger_name: 'Людмила Волохова', passenger_email: 'lyuda@example.com', passenger_phone: '+7 999 707-00-16', seats_count: 1, total_price: 9200, status: 'confirmed' },
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -428,7 +428,7 @@
                     cachedFlights = DEMO_FLIGHTS;
                 }
             } catch (e) {
-                console.error('Ошибка загружки рейсов, используем DEMO:', e);
+                console.error('Ошибка загрузки рейсов, используем DEMO:', e);
                 cachedFlights = DEMO_FLIGHTS;
             }
             renderFlights();
@@ -564,7 +564,7 @@
                     cachedAirports = DEMO_AIRPORTS;
                 }
             } catch (e) {
-                console.error('Ошибка загружки аэропортов, используем DEMO:', e);
+                console.error('Ошибка загрузки аэропортов, используем DEMO:', e);
                 cachedAirports = DEMO_AIRPORTS;
             }
             renderAirports();
@@ -585,7 +585,7 @@
                     <div class="card">
                         <h3>✈️ ${a.code}</h3>
                         <p><strong>${a.name}</strong></p>
-                        <p><strong>🏙️ Город:</strong> ${a.city}</p>
+                        <p><strong>🏢 Город:</strong> ${a.city}</p>
                         <p><strong>🌍 Страна:</strong> ${a.country}</p>
                         ${deleteBtn}
                     </div>
@@ -679,7 +679,7 @@
                     cachedBookings = DEMO_BOOKINGS;
                 }
             } catch (e) {
-                console.error('Ошибка загружки билетов, используем DEMO:', e);
+                console.error('Ошибка загрузки билетов, используем DEMO:', e);
                 cachedBookings = DEMO_BOOKINGS;
             }
             renderBookings();
@@ -692,20 +692,23 @@
                 return;
             }
             list.innerHTML = cachedBookings.map(b => {
+                // Найти рейс из кэша
+                const flight = cachedFlights.find(f => f.id === b.flight_id);
+                
                 let deleteBtn = '';
                 if (currentUser && currentUser.role === 'admin') {
                     deleteBtn = `<button class="btn-delete" onclick="deleteBooking(${b.id}, '${b.booking_number || b.id}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>`;
                 }
-                const flightInfo = b.flight ? ` ${b.flight.departure_airport.city} → ${b.flight.arrival_airport.city}` : '';
+                
                 return `
                     <div class="card-flip-container">
                         <div class="card-flip">
                             <div class="card-front">
                                 <h3>🎫 №${b.booking_number || b.id}</h3>
                                 <p><strong>👤 Пассажир:</strong> ${b.passenger_name}</p>
-                                <p><strong>✈️ Рейс:</strong> ${b.flight?.flight_number || '-'} (${b.flight?.airline || '-'})</p>
-                                <p><strong>🏢 Вылет из:</strong> ${b.flight?.departure_airport.name || '-'}, ${b.flight?.departure_airport.city || '-'}</p>
-                                <p><strong>🏢 Прилёт в:</strong> ${b.flight?.arrival_airport.name || '-'}, ${b.flight?.arrival_airport.city || '-'}</p>
+                                <p><strong>✈️ Рейс:</strong> ${flight?.flight_number || '-'} (${flight?.airline || '-'})</p>
+                                <p><strong>🏢 Вылет из:</strong> ${flight?.departure_airport.name || '-'}, ${flight?.departure_airport.city || '-'}</p>
+                                <p><strong>🏢 Прилёт в:</strong> ${flight?.arrival_airport.name || '-'}, ${flight?.arrival_airport.city || '-'}</p>
                                 <p><strong>📧 Email:</strong> ${b.passenger_email}</p>
                                 <p><strong>📱 Телефон:</strong> ${b.passenger_phone}</p>
                                 <p><strong>💺 Мест:</strong> ${b.seats_count || 1}</p>
@@ -719,9 +722,9 @@
                                     <div><strong>Пассажир</strong>
                                     <div>${b.passenger_name}</div></div>
                                     <div><strong>Рейс</strong>
-                                    <div>${b.flight?.flight_number || '-'} ${b.flight?.airline || ''}</div></div>
+                                    <div>${flight?.flight_number || '-'} ${flight?.airline || ''}</div></div>
                                     <div><strong>Маршрут</strong>
-                                    <div>${b.flight?.departure_airport.code || '-'} ✈️ ${b.flight?.arrival_airport.code || '-'}</div></div>
+                                    <div>${flight?.departure_airport.code || '-'} ✈️ ${flight?.arrival_airport.code || '-'}</div></div>
                                     <div><strong>Мест забронировано</strong>
                                     <div>${b.seats_count || 1}</div></div>
                                     <div><strong>Цена</strong>
