@@ -10,6 +10,12 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from app.config import settings
 
+# 🔥 КРИТИЧНО: Импортируем ВСЕ модели чтобы они регистрировались в Base.metadata
+from app.models.users import UserModel
+from app.models.roles import RoleModel
+from app.models.flight import FlightModel, AirportModel
+from app.models.booking import BookingModel, PaymentModel
+
 engine = create_async_engine(settings.get_db_url)
 
 engine_null_pool = create_async_engine(settings.get_db_url, poolclass=NullPool)
