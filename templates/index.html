@@ -1,4 +1,7 @@
-                <div class="tabs-container">
-                    <button class="tab-btn active" onclick="switchFlightTab('all')">📋 Все рейсы</button>
-                    <button class="tab-btn search-tab" onclick="switchFlightTab('search')" style="display: none;">🔍 Поиск</button>
-                </div>
+                        <select id="sort-select" class="role-select" onchange="sortAndRenderFlights()" style="flex: 1; max-width: 300px;">
+                            <option value="none">— Без сортировки —</option>
+                            <option value="dep-city">📍 По городу ОТКУДА (A-Z)</option>
+                            <option value="arr-city">📍 По городу КУДА (Z-A)</option>
+                            <option value="price-asc">💰 По цене (^)</option>
+                            <option value="price-desc">💰 По цене (v)</option>
+                        </select>
