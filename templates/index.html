@@ -27,6 +27,7 @@
                             <input type="password" id="login-password" placeholder="user123">
                         </div>
                         <button class="btn-auth" onclick="login()">🔐 ВОЙТИ</button>
+                        <button class="btn-auth" onclick="loginAsGuest()" style="background: #667eea; margin-top: 10px;">👀 ВОЙТИ КАК ГОСТЬ</button>
                         <p class="auth-link">Нет аккаунта? <a onclick="switchAuthForm()">Зарегистрироваться</a></p>
                         
                         <!-- Квик аккаунты -->
@@ -86,7 +87,7 @@
             <div class="navbar-menu">
                 <button class="nav-btn active" onclick="switchMainTab('flights')">🛫 Рейсы</button>
                 <button class="nav-btn" onclick="switchMainTab('airports')">🏢 Аэропорты</button>
-                <button class="nav-btn" onclick="switchMainTab('bookings')">🎫 Билеты</button>
+                <button class="nav-btn bookings-nav" onclick="switchMainTab('bookings')">🎫 Билеты</button>
                 <button class="nav-btn" onclick="switchMainTab('account')">👤 Профиль</button>
                 <button class="nav-btn logout" onclick="logout()">🚪 ВЫХОД</button>
             </div>
@@ -113,7 +114,7 @@
                         <input type="tel" id="booking-phone" placeholder="Номер телефона">
                         <input type="number" id="booking-seats" placeholder="Кол-во мест" min="1" value="1">
                     </div>
-                    <button class="btn-primary" onclick="createBooking()">✅ ЗАБРОНИРОВАТЬ</button>
+                    <button class="btn-primary book-btn" onclick="createBooking()">✅ ЗАБРОНИРОВАТЬ</button>
                     <button class="btn-secondary" onclick="clearBookingForm()" style="background: #e2e8f0; color: #718096; margin-top: 10px;">❌ Отмена</button>
                 </div>
                 
@@ -308,6 +309,16 @@
             notify('✅ Успешно вошли!', 'success');
         }
 
+        function loginAsGuest() {
+            currentUser = {
+                name: 'Гость',
+                email: 'guest@view.only',
+                role: 'guest',
+                loginTime: new Date().toLocaleString('ru-RU')
+            };
+            showApp();
+            notify('👀 Вход в гостевом режиме (только просмотр)', 'success');
+        }
 
         function register() {
             const name = document.getElementById('register-name').value.trim();
@@ -364,6 +375,17 @@
                 document.getElementById('create-airport-section').style.display = 'none';
             }
             
+            // 👀 ГОСТЕВОЙ РЕЖИМ - СКРЫТИЕ ВСЕХ КНОПОК
+            if (currentUser && currentUser.role === 'guest') {
+                document.querySelectorAll('.book-btn, .btn-delete').forEach(btn => btn.style.display = 'none');
+                document.getElementById('booking-form-section').style.display = 'none';
+                document.getElementById('create-airport-section').style.display = 'none';
+                document.querySelector('.bookings-nav').style.display = 'none';
+            } else {
+                document.querySelectorAll('.book-btn, .btn-delete').forEach(btn => btn.style.display = '');
+                document.querySelector('.bookings-nav').style.display = '';
+            }
+            
             await loadAllFlights();
             await loadAllAirports();
             await loadMyBookings();
@@ -410,7 +432,11 @@
             if (!currentUser) return;
             document.getElementById('acc-name').textContent = currentUser.name;
             document.getElementById('acc-email').textContent = currentUser.email;
-            const roleText = currentUser.role === 'admin' ? '👑 Администратор' : '👤 Пользователь';
+            
+            let roleText = '👤 Пользователь';
+            if (currentUser.role === 'admin') roleText = '👑 Администратор';
+            if (currentUser.role === 'guest') roleText = '👀 Гость (только просмотр)';
+            
             document.getElementById('acc-role').textContent = roleText;
             document.getElementById('acc-date').textContent = currentUser.loginTime;
         }
@@ -439,17 +465,23 @@
                 list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">✈️ Рейсы не найдены</div>';
                 return;
             }
-            list.innerHTML = cachedFlights.map(f => `
-                <div class="card">
-                    <h3>${f.flight_number}</h3>
-                    <p><strong>🎫 ${f.airline}</strong></p>
-                    <p><strong>📍 Маршрут:</strong> ${f.departure_airport.city} (${f.departure_airport.code}) ➡️ ${f.arrival_airport.city} (${f.arrival_airport.code})</p>
-                    <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
-                    <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
-                    <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
-                    <button class="btn-select" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id}, ${f.price})">🎟️ ЗАБРОНИРОВАТЬ</button>
-                </div>
-            `).join('');
+            list.innerHTML = cachedFlights.map(f => {
+                const bookBtn = currentUser && currentUser.role === 'guest'
+                    ? '<p style="color: #a0aec0; font-size: 13px; margin-top: 10px;">👀 Гостевой режим - только просмотр</p>'
+                    : `<button class="btn-select book-btn" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id}, ${f.price})">🎟️ ЗАБРОНИРОВАТЬ</button>`;
+                
+                return `
+                    <div class="card">
+                        <h3>${f.flight_number}</h3>
+                        <p><strong>🎫 ${f.airline}</strong></p>
+                        <p><strong>📍 Маршрут:</strong> ${f.departure_airport.city} (${f.departure_airport.code}) ➡️ ${f.arrival_airport.city} (${f.arrival_airport.code})</p>
+                        <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
+                        <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
+                        <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
+                        ${bookBtn}
+                    </div>
+                `;
+            }).join('');
         }
 
 
@@ -477,7 +509,7 @@
                         <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
                         <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
                         <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
-                        <button class="btn-select" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id}, ${f.price})">🎟️ ЗАБРОНИРОВАТЬ</button>
+                        <button class="btn-select book-btn" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id}, ${f.price})" ${currentUser && currentUser.role === 'guest' ? 'style="display: none;"' : ''}>🎟️ ЗАБРОНИРОВАТЬ</button>
                     </div>
                 `).join('');
                 notify(`✅ Найдено ${flights.length} рейсов`, 'success');
@@ -577,7 +609,7 @@
             }
             list.innerHTML = cachedAirports.map(a => {
                 let deleteBtn = '';
-                if (currentUser && currentUser.role === 'admin') {
+                if (currentUser && currentUser.role === 'admin' && currentUser.role !== 'guest') {
                     deleteBtn = `<button class="btn-delete" onclick="deleteAirport(${a.id}, '${a.code}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>`;
                 }
                 return `
@@ -593,7 +625,7 @@
         }
 
         async function createAirport() {
-            if (!currentUser || currentUser.role !== 'admin') {
+            if (!currentUser || currentUser.role !== 'admin' || currentUser.role === 'guest') {
                 notify('⚠️ Только администраторы могут создавать аэропорты', 'error');
                 return;
             }
@@ -638,7 +670,7 @@
         }
 
         async function deleteAirport(airportId, airportCode) {
-            if (!currentUser || currentUser.role !== 'admin') {
+            if (!currentUser || currentUser.role !== 'admin' || currentUser.role === 'guest') {
                 notify('⚠️ Только администраторы могут удалять аэропорты', 'error');
                 return;
             }
@@ -691,11 +723,10 @@
                 return;
             }
             list.innerHTML = cachedBookings.map(b => {
-                // Найти рейс из кэша
                 const flight = cachedFlights.find(f => f.id === b.flight_id);
                 
                 let deleteBtn = '';
-                if (currentUser && currentUser.role === 'admin') {
+                if (currentUser && currentUser.role === 'admin' && currentUser.role !== 'guest') {
                     deleteBtn = `<button class="btn-delete" onclick="deleteBooking(${b.id}, '${b.booking_number || b.id}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>`;
                 }
                 
@@ -721,7 +752,7 @@
         }
 
         async function deleteBooking(bookingId, bookingNumber) {
-            if (!currentUser || currentUser.role !== 'admin') {
+            if (!currentUser || currentUser.role !== 'admin' || currentUser.role === 'guest') {
                 notify('⚠️ Только администраторы могут удалять билеты', 'error');
                 return;
             }
