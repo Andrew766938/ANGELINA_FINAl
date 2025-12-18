@@ -439,8 +439,7 @@
                 <div class="card">
                     <h3>${f.flight_number}</h3>
                     <p><strong>🎫 ${f.airline}</strong></p>
-                    <p><strong>📍 Маршрут:</strong> ${f.departure_airport_id} ➡️ ${f.arrival_airport_id}</p>
-                    <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
+                <p><strong>📍 Маршрут:</strong> ${f.departure_airport.city} (${f.departure_airport.code}) ➡️ ${f.arrival_airport.city} (${f.arrival_airport.code})</p>                    <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
                     <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
                     <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
                     <button class="btn-select" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id}, ${f.price})">🎟️ ЗАБРОНИРОВАТЬ</button>
