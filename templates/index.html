@@ -1,46 +1,28 @@
-        let sortedFlights = [];
-        let currentSort = 'none';
-
-        function sortAndRenderFlights() {
-            const sortValue = document.getElementById('sort-select').value;
-            currentSort = sortValue;
+        async function showApp() {
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            updateAccountTab();
             
-            sortedFlights = [...cachedFlights];
-            
-            if (sortValue === 'dep-city') {
-                sortedFlights.sort((a, b) => a.departure_airport.city.localeCompare(b.departure_airport.city, 'ru'));
-            } else if (sortValue === 'arr-city') {
-                sortedFlights.sort((a, b) => a.arrival_airport.city.localeCompare(b.arrival_airport.city, 'ru'));
-            } else if (sortValue === 'price-asc') {
-                sortedFlights.sort((a, b) => a.price - b.price);
-            } else if (sortValue === 'price-desc') {
-                sortedFlights.sort((a, b) => b.price - a.price);
+            if (currentUser.role === 'admin') {
+                document.getElementById('create-airport-section').style.display = 'block';
+            } else {
+                document.getElementById('create-airport-section').style.display = 'none';
             }
             
-            renderFlightsFromArray(sortedFlights);
-        }
-
-        function renderFlightsFromArray(flights) {
-            const list = document.getElementById('flights-list');
-            if (!flights || flights.length === 0) {
-                list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">✈️ Рейсы не найдены</div>';
-                return;
+            // 👀 ГОСТЕВОЙ РЕЖИМ - СКРЫТИЕ ВСЕХ КНОПОК
+            if (currentUser && currentUser.role === 'guest') {
+                document.querySelectorAll('.book-btn, .btn-delete').forEach(btn => btn.style.display = 'none');
+                document.getElementById('booking-form-section').style.display = 'none';
+                document.getElementById('create-airport-section').style.display = 'none';
+                document.querySelector('.bookings-nav').style.display = 'none';
+                document.getElementById('sorting-section').style.display = 'none';
+            } else {
+                document.querySelectorAll('.book-btn, .btn-delete').forEach(btn => btn.style.display = '');
+                document.querySelector('.bookings-nav').style.display = '';
+                document.getElementById('sorting-section').style.display = 'block';
             }
-            list.innerHTML = flights.map(f => {
-                const bookBtn = currentUser && currentUser.role === 'guest'
-                    ? '<p style="color: #a0aec0; font-size: 13px; margin-top: 10px;">👀 Гостевой режим - только просмотр</p>'
-                    : `<button class="btn-select book-btn" onclick="selectFlight(${f.id}, '${f.flight_number}', ${f.departure_airport_id}, ${f.arrival_airport_id}, ${f.price})">🎟️ ЗАБРОНИРОВАТЬ</button>`;
-                
-                return `
-                    <div class="card">
-                        <h3>${f.flight_number}</h3>
-                        <p><strong>🎫 ${f.airline}</strong></p>
-                        <p><strong>📍 Маршрут:</strong> ${f.departure_airport.city} (${f.departure_airport.code}) ➡️ ${f.arrival_airport.city} (${f.arrival_airport.code})</p>
-                        <p><strong>⏰ Вылет:</strong> ${new Date(f.departure_time).toLocaleString('ru-RU')}</p>
-                        <p><strong>💰 Цена:</strong> <span style="color: #48bb78; font-weight: 700;">₽${f.price}</span></p>
-                        <p><strong>💺 Места:</strong> ${f.available_seats}/${f.total_seats}</p>
-                        ${bookBtn}
-                    </div>
-                `;
-            }).join('');
+            
+            await loadAllFlights();
+            await loadAllAirports();
+            await loadMyBookings();
         }
