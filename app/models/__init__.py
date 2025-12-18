@@ -1,14 +1,5 @@
-from app.models.users import UserModel
-from app.models.roles import RoleModel
-from app.models.flight import FlightModel, AirportModel
-from app.models.booking import BookingModel, PaymentModel, BookingStatus
-
-__all__ = [
-    'UserModel',
-    'RoleModel',
-    'FlightModel',
-    'AirportModel',
-    'BookingModel',
-    'PaymentModel',
-    'BookingStatus',
-]
+# 🔥 ОТ ИМПОРТЫ НЕ ДОЛЖНО БЫТЬ НИКАКОГО!
+# Это вызывает циклические импорты с database.py
+# 
+# Все модели импортируются через функцию register_models()
+# в app/database/database.py
