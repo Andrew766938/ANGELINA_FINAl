@@ -9,6 +9,7 @@ from app.api.auth import router as auth_router
 from app.api.roles import router as role_router
 from app.api.flights import router as flights_router
 from app.api.bookings import router as bookings_router
+from app.admin import setup_admin
 
 app = FastAPI(
     title="Крылья онлайн - Система бронирования авиа билетов",
@@ -31,6 +32,13 @@ app.include_router(auth_router)
 app.include_router(role_router)
 app.include_router(flights_router)
 app.include_router(bookings_router)
+
+# ============== SQLADMIN SETUP ==============
+try:
+    setup_admin(app)
+    print("✅ SQLAdmin админ-панель подключена на /admin")
+except Exception as e:
+    print(f"⚠️  Ошибка при подключении SQLAdmin: {e}")
 
 # Монтируем статические файлы
 static_dir = Path(__file__).parent / "static"
