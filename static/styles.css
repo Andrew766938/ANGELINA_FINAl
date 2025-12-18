@@ -433,22 +433,20 @@ h2 {
     backface-visibility: hidden;
     display: flex;
     flex-direction: column;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .card-front {
     background: white;
-    border-radius: 12px;
     padding: 22px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 3px solid white;
 }
 
 .card-back {
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-    border-radius: 12px;
     padding: 22px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 3px solid white;
     transform: rotateY(180deg);
     color: white;
     overflow-y: auto;
