@@ -1,7 +1,14 @@
-                        <select id="sort-select" class="role-select" onchange="sortAndRenderFlights()" style="flex: 1; max-width: 300px;">
-                            <option value="none">— Без сортировки —</option>
-                            <option value="dep-city">📍 По городу ОТКУДА (A-Z)</option>
-                            <option value="arr-city">📍 По городу КУДА (Z-A)</option>
-                            <option value="price-asc">💰 По цене (^)</option>
-                            <option value="price-desc">💰 По цене (v)</option>
-                        </select>
+            // 👀 ГОСТЕВОЙ РЕЖИМ - СКРЫТИЕ ВСЕХ КНОПОК
+            if (currentUser && currentUser.role === 'guest') {
+                document.querySelectorAll('.book-btn, .btn-delete').forEach(btn => btn.style.display = 'none');
+                document.getElementById('booking-form-section').style.display = 'none';
+                document.getElementById('create-airport-section').style.display = 'none';
+                document.getElementById('sorting-section').style.display = 'none';
+                document.querySelector('.bookings-nav').style.display = 'none';
+                document.querySelector('.search-tab').style.display = 'none';
+            } else {
+                document.querySelectorAll('.book-btn, .btn-delete').forEach(btn => btn.style.display = '');
+                document.getElementById('sorting-section').style.display = 'block';
+                document.querySelector('.bookings-nav').style.display = '';
+                document.querySelector('.search-tab').style.display = '';
+            }
