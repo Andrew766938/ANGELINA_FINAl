@@ -694,6 +694,7 @@
                     <div class="card">
                         <h3>🎫 №${b.booking_number || b.id}</h3>
                         <p><strong>👤 Пассажир:</strong> ${b.passenger_name}</p>
+                                        <p><strong>📍 Маршрут:</strong> ${b.flight.departure_airport.city} (${b.flight.departure_airport.code}) ➡️ ${b.flight.arrival_airport.city} (${b.flight.arrival_airport.code})</p>
                         <p><strong>📧 Email:</strong> ${b.passenger_email}</p>
                         <p><strong>📱 Телефон:</strong> ${b.passenger_phone}</p>
                         <p><strong>💺 Мест:</strong> ${b.seats_count || 1}</p>
