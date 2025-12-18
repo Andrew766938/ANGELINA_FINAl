@@ -12,12 +12,13 @@ from app.api.roles import router as role_router
 from app.api.flights import router as flights_router
 from app.api.bookings import router as bookings_router
 from app.admin import setup_admin
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text
+from sqlalchemy.orm import sessionmaker, Session
 from app.database.database import Base
 from app.config import settings
 from app.models.flight import FlightModel, AirportModel
+from datetime import datetime
 
 app = FastAPI(
     title="Крылья онлайн - Система бронирования авиа билетов",
@@ -25,21 +26,22 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# ============== АВТОМАТИЧЕСКАЯ ИНИЦИАЛИЗАЦИЯ БД ==============
+# ============== АВТОМАТИЧЕсКАЯ ИНИЦИАЛИЗАЦИЯ БД ==============
 
-async def init_database():
-    """🗄️ Автоматическая инициализация БД тестовыми данными"""
+def init_database_sync():
+    """🗄️ синхронная инициализация БД (работает для SQLite)"""
     try:
         print("\n🗄️  Проверка БД...")
         
-        engine = create_async_engine(
-            settings.get_db_url,
-            echo=False,
-        )
+        # Конвертируем async URL в sync для сохранения таблиц
+        db_url = settings.get_db_url
+        sync_db_url = db_url.replace('sqlite+aiosqlite:///', 'sqlite:///')
+        
+        sync_engine = create_engine(sync_db_url, echo=False)
         
         # Проверим есть ли таблицы
-        async with engine.begin() as conn:
-            result = await conn.execute(text(
+        with sync_engine.connect() as conn:
+            result = conn.execute(text(
                 "SELECT name FROM sqlite_master WHERE type='table';"
             ))
             tables = [row[0] for row in result.fetchall()]
@@ -47,20 +49,23 @@ async def init_database():
         if not tables:
             print("🔴 Таблицы не найдены. Создаю...")
             
-            # Создаем таблицы
-            async with engine.begin() as conn:
-                await conn.run_sync(Base.metadata.create_all)
-            
+            # Создаем все таблицы массово
+            Base.metadata.create_all(sync_engine)
             print("✅ Таблицы созданы")
             
-            # Загружаем тестовые аэропорты
+            # Загружаем тестовые данные
             print("🌱 Загружаю тестовые данные...")
             
-            async_session = sessionmaker(
-                engine, class_=AsyncSession, expire_on_commit=False
-            )
+            SessionLocal = sessionmaker(bind=sync_engine, expire_on_commit=False)
+            db = SessionLocal()
             
-            async with async_session() as session:
+            try:
+                # Проверь не загружены ли уже данные
+                existing = db.execute(text("SELECT COUNT(*) FROM airports")).scalar()
+                if existing > 0:
+                    print("ℹ️  Тестовые аэропорты уже загружены")
+                    return
+                
                 airports = [
                     AirportModel(
                         code='MOW',
@@ -94,14 +99,15 @@ async def init_database():
                     ),
                 ]
                 
-                session.add_all(airports)
-                await session.commit()
-            
-            print(f"✅ Загружено {len(airports)} тестовых аэропортов")
+                db.add_all(airports)
+                db.commit()
+                print(f"✅ Загружено {len(airports)} тестовых аэропортов")
+            finally:
+                db.close()
         else:
             print(f"✅ БД уже инициализирована ({len(tables)} таблиц)")
         
-        await engine.dispose()
+        sync_engine.dispose()
         
     except Exception as e:
         print(f"⚠️  Ошибка при инициализации: {e}")
@@ -121,8 +127,8 @@ async def startup_event():
     import sys
     sys.stdout.flush()
     
-    # Инициализируем БД
-    await init_database()
+    # Инициализируем БД (SYNC - НРОВЕРГОО для SQLite)
+    init_database_sync()
     
     print("✅ Приложение готово!\n")
 
