@@ -35,7 +35,6 @@ class BookingListRead(BaseModel):
     id: int
     booking_number: str
     flight_id: int
-    flight: FlightListRead
     passenger_name: str
     passenger_email: str
     passenger_phone: str
