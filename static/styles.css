@@ -411,7 +411,8 @@ h2 {
 /* ============== FLIP CARD ANIMATION ============== */
 .card-flip-container {
     perspective: 1000px;
-    height: 100%;
+    display: block;
+    min-height: 300px;
 }
 
 .card-flip {
@@ -420,6 +421,7 @@ h2 {
     position: relative;
     transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     transform-style: preserve-3d;
+    min-height: 300px;
 }
 
 .card-flip-container:hover .card-flip {
@@ -435,6 +437,7 @@ h2 {
     flex-direction: column;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    min-height: 300px;
 }
 
 .card-front {
@@ -783,6 +786,18 @@ h2 {
     .card-back {
         padding: 16px;
     }
+
+    .card-flip-container {
+        min-height: 250px;
+    }
+
+    .card-flip {
+        min-height: 250px;
+    }
+
+    .card-front, .card-back {
+        min-height: 250px;
+    }
 }
 
 /* ============== PHONE (480px) ============== */
@@ -946,5 +961,17 @@ h2 {
 
     .card-back-content {
         font-size: 13px;
+    }
+
+    .card-flip-container {
+        min-height: 250px;
+    }
+
+    .card-flip {
+        min-height: 250px;
+    }
+
+    .card-front, .card-back {
+        min-height: 250px;
     }
 }
