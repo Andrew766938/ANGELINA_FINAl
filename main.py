@@ -15,10 +15,14 @@ from app.admin import setup_admin
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, Session
-from app.database.database import Base
+from app.database.base import Base
+from app.database.database import register_models
 from app.config import settings
 from app.models.flight import FlightModel, AirportModel
 from datetime import datetime
+
+# 🔥 Обязательно регистрируем модели сразу после импорта
+register_models()
 
 app = FastAPI(
     title="Крылья онлайн - Система бронирования авиа билетов",
@@ -26,7 +30,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# ============== АВТОМАТИЧЕсКАЯ ИНИЦИАЛИЗАЦИЯ БД ==============
+# ============== АВТОМАТИЧЕСКАЯ ИНИЦИАЛИЗАЦИЯ БД ==============
 
 def init_database_sync():
     """🗄️ синхронная инициализация БД (работает для SQLite)"""
@@ -127,7 +131,7 @@ async def startup_event():
     import sys
     sys.stdout.flush()
     
-    # Инициализируем БД (SYNC - НРОВЕРГОО для SQLite)
+    # Инициализируем БД (SYNC - НРОВЕРГО для SQLite)
     init_database_sync()
     
     print("✅ Приложение готово!\n")
