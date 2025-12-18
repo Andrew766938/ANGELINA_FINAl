@@ -9,10 +9,11 @@ from alembic import context
 from app.database.database import Base
 from app.config import settings
 
-# TODO Добавить сюда импорт созданных моделей
-# Пример:
+# Import all models for Alembic to detect them
 from app.models.users import UserModel
 from app.models.roles import RoleModel
+from app.models.flight import FlightModel, AirportModel
+from app.models.booking import BookingModel, PaymentModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
