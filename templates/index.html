@@ -171,6 +171,7 @@
             <!-- ============== BOOKINGS TAB ============== -->
             <div id="bookings" class="tab">
                 <h2>🎫 Мои билеты</h2>
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px; font-size: 14px;">💡 Подсказка: наведите курсор на карточку билета, чтобы увидеть обратную сторону с полной информацией!</p>
                 
                 <!-- Только список билетов -->
                 <div id="bookings-list" class="cards-grid"></div>
@@ -696,22 +697,41 @@
                     deleteBtn = `<button class="btn-delete" onclick="deleteBooking(${b.id}, '${b.booking_number || b.id}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>`;
                 }
                 const flightInfo = b.flight ? ` ${b.flight.departure_airport.city} → ${b.flight.arrival_airport.city}` : '';
-                const depAirport = b.flight?.departure_airport ? `<p><strong>🛫 Вылет из:</strong> ${b.flight.departure_airport.name}, ${b.flight.departure_airport.city}</p>` : '';
-                const arrAirport = b.flight?.arrival_airport ? `<p><strong>🛬 Прилёт в:</strong> ${b.flight.arrival_airport.name}, ${b.flight.arrival_airport.city}</p>` : '';
-                const flightNum = b.flight?.flight_number ? `<p><strong>✈️ Рейс:</strong> ${b.flight.flight_number} (${b.flight.airline})</p>` : '';
                 return `
-                    <div class="card">
-                        <h3>🎫 №${b.booking_number || b.id}</h3>
-                        <p><strong>👤 Пассажир:</strong> ${b.passenger_name}</p>
-                        ${flightNum}
-                        ${depAirport}
-                        ${arrAirport}
-                        <p><strong>📧 Email:</strong> ${b.passenger_email}</p>
-                        <p><strong>📱 Телефон:</strong> ${b.passenger_phone}</p>
-                        <p><strong>💺 Мест:</strong> ${b.seats_count || 1}</p>
-                        <p><strong>💰 Сумма:</strong> ${b.total_price ? `₽${b.total_price}` : '-'}</p>
-                        <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'pending'}</span></p>
-                        ${deleteBtn}
+                    <div class="card-flip-container">
+                        <div class="card-flip">
+                            <div class="card-front">
+                                <h3>🎫 №${b.booking_number || b.id}</h3>
+                                <p><strong>👤 Пассажир:</strong> ${b.passenger_name}</p>
+                                <p><strong>✈️ Рейс:</strong> ${b.flight?.flight_number || '-'} (${b.flight?.airline || '-'})</p>
+                                <p><strong>🏢 Вылет из:</strong> ${b.flight?.departure_airport.name || '-'}, ${b.flight?.departure_airport.city || '-'}</p>
+                                <p><strong>🏢 Прилёт в:</strong> ${b.flight?.arrival_airport.name || '-'}, ${b.flight?.arrival_airport.city || '-'}</p>
+                                <p><strong>📧 Email:</strong> ${b.passenger_email}</p>
+                                <p><strong>📱 Телефон:</strong> ${b.passenger_phone}</p>
+                                <p><strong>💺 Мест:</strong> ${b.seats_count || 1}</p>
+                                <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'pending'}</span></p>
+                                ${deleteBtn}
+                            </div>
+                            <div class="card-back">
+                                <div class="card-back-content">
+                                    <div><strong>Номер билета</strong>
+                                    <div>${b.booking_number || b.id}</div></div>
+                                    <div><strong>Пассажир</strong>
+                                    <div>${b.passenger_name}</div></div>
+                                    <div><strong>Рейс</strong>
+                                    <div>${b.flight?.flight_number || '-'} ${b.flight?.airline || ''}</div></div>
+                                    <div><strong>Маршрут</strong>
+                                    <div>${b.flight?.departure_airport.code || '-'} ✈️ ${b.flight?.arrival_airport.code || '-'}</div></div>
+                                    <div><strong>Мест забронировано</strong>
+                                    <div>${b.seats_count || 1}</div></div>
+                                    <div><strong>Цена</strong>
+                                    <div>₽${b.total_price || 0}</div></div>
+                                    <div><strong>Статус</strong>
+                                    <div>${b.status || 'pending'}</div></div>
+                                    <div class="flip-hint">← Наведите на карточку для поворота</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `;
             }).join('');
