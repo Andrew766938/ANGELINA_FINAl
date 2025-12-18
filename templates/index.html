@@ -171,7 +171,6 @@
             <!-- ============== BOOKINGS TAB ============== -->
             <div id="bookings" class="tab">
                 <h2>🎫 Мои билеты</h2>
-                <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px; font-size: 14px;">💡 Подсказка: наведите курсор на карточку билета, чтобы увидеть обратную сторону с полной информацией!</p>
                 
                 <!-- Только список билетов -->
                 <div id="bookings-list" class="cards-grid"></div>
@@ -714,25 +713,6 @@
                                 <p><strong>💺 Мест:</strong> ${b.seats_count || 1}</p>
                                 <p><strong>✅ Статус:</strong> <span style="color: #48bb78; font-weight: 700;">${b.status || 'pending'}</span></p>
                                 ${deleteBtn}
-                            </div>
-                            <div class="card-back">
-                                <div class="card-back-content">
-                                    <div><strong>Номер билета</strong>
-                                    <div>${b.booking_number || b.id}</div></div>
-                                    <div><strong>Пассажир</strong>
-                                    <div>${b.passenger_name}</div></div>
-                                    <div><strong>Рейс</strong>
-                                    <div>${flight?.flight_number || '-'} ${flight?.airline || ''}</div></div>
-                                    <div><strong>Маршрут</strong>
-                                    <div>${flight?.departure_airport.code || '-'} ✈️ ${flight?.arrival_airport.code || '-'}</div></div>
-                                    <div><strong>Мест забронировано</strong>
-                                    <div>${b.seats_count || 1}</div></div>
-                                    <div><strong>Цена</strong>
-                                    <div>₽${b.total_price || 0}</div></div>
-                                    <div><strong>Статус</strong>
-                                    <div>${b.status || 'pending'}</div></div>
-                                    <div class="flip-hint">← Наведите на карточку для поворота</div>
-                                </div>
                             </div>
                         </div>
                     </div>
