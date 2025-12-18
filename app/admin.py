@@ -11,9 +11,18 @@ from app.models.booking import BookingModel
 
 
 # Create sync engine for SQLAdmin (SQLAdmin doesn't support async yet)
+# SQLAdmin requires sync engine, so we use synchronous SQLite URL
+db_url = settings.get_db_url
+# Remove aiosqlite and use pysqlite3 or default sqlite
+if 'aiosqlite' in db_url:
+    db_url = db_url.replace('sqlite+aiosqlite:///', 'sqlite:///')
+else:
+    db_url = f"sqlite:///{settings.DB_NAME}"
+
 engine = create_engine(
-    str(settings.get_db_url).replace('aiosqlite', 'sqlite'),
-    echo=False
+    db_url,
+    echo=False,
+    connect_args={"check_same_thread": False} if 'sqlite' in db_url else {}
 )
 
 
