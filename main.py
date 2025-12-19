@@ -33,7 +33,7 @@ app = FastAPI(
 # ============== АВТОМАТИЧЕСКАЯ ИНИЦИАЛИЗАЦИЯ БД ==============
 
 def init_database_sync():
-    """🗄️ синхронная инициализация БД (работает для SQLite)"""
+    """🗄️  синхронная инициализация БД (работает для SQLite)"""
     try:
         print("\n🗄️  Проверка БД...")
         
@@ -104,8 +104,87 @@ def init_database_sync():
                 ]
                 
                 db.add_all(airports)
+                db.flush()
                 db.commit()
                 print(f"✅ Загружено {len(airports)} тестовых аэропортов")
+                
+                # Создаем тестовые рейсы
+                print("✈️  Создаю тестовые рейсы...")
+                
+                flights = [
+                    FlightModel(
+                        flight_number='SU-001',
+                        airline='Аэрофлот',
+                        departure_airport_id=1,
+                        arrival_airport_id=2,
+                        departure_time=datetime(2025, 12, 25, 10, 0),
+                        arrival_time=datetime(2025, 12, 25, 12, 0),
+                        total_seats=180,
+                        available_seats=180,
+                        price=5500.0
+                    ),
+                    FlightModel(
+                        flight_number='SU-002',
+                        airline='Аэрофлот',
+                        departure_airport_id=2,
+                        arrival_airport_id=1,
+                        departure_time=datetime(2025, 12, 25, 14, 0),
+                        arrival_time=datetime(2025, 12, 25, 16, 0),
+                        total_seats=180,
+                        available_seats=180,
+                        price=5500.0
+                    ),
+                    FlightModel(
+                        flight_number='U6-100',
+                        airline='Уральские авиалинии',
+                        departure_airport_id=1,
+                        arrival_airport_id=3,
+                        departure_time=datetime(2025, 12, 26, 8, 0),
+                        arrival_time=datetime(2025, 12, 26, 11, 30),
+                        total_seats=150,
+                        available_seats=150,
+                        price=4800.0
+                    ),
+                    FlightModel(
+                        flight_number='UT-50',
+                        airline='Ют-Аэр',
+                        departure_airport_id=3,
+                        arrival_airport_id=4,
+                        departure_time=datetime(2025, 12, 26, 18, 0),
+                        arrival_time=datetime(2025, 12, 27, 2, 30),
+                        total_seats=160,
+                        available_seats=160,
+                        price=6200.0
+                    ),
+                    FlightModel(
+                        flight_number='S7-500',
+                        airline='S7 Авиалинии',
+                        departure_airport_id=2,
+                        arrival_airport_id=4,
+                        departure_time=datetime(2025, 12, 27, 9, 0),
+                        arrival_time=datetime(2025, 12, 27, 15, 0),
+                        total_seats=120,
+                        available_seats=120,
+                        price=7200.0
+                    ),
+                    FlightModel(
+                        flight_number='SU-003',
+                        airline='Аэрофлот',
+                        departure_airport_id=1,
+                        arrival_airport_id=5,
+                        departure_time=datetime(2025, 12, 28, 7, 0),
+                        arrival_time=datetime(2025, 12, 28, 17, 30),
+                        total_seats=200,
+                        available_seats=200,
+                        price=8500.0
+                    ),
+                ]
+                
+                db.add_all(flights)
+                db.flush()
+                db.commit()
+                print(f"✅ Загружено {len(flights)} тестовых рейсов")
+                
             finally:
                 db.close()
         else:
