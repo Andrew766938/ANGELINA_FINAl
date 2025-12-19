@@ -739,7 +739,7 @@
                 
                 let deleteBtn = '';
                 if (currentUser && currentUser.role === 'admin' && currentUser.role !== 'guest') {
-                    deleteBtn = `<button class="btn-delete" onclick="deleteBooking(${b.id}, '${b.booking_number || b.id}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ</button>`;
+                    deleteBtn = `<button class="btn-delete" onclick="deleteFlightByBookingId(${b.flight_id}, '${b.booking_number || b.id}')" style="background: #f56565; color: white; margin-top: 10px; width: 100%;">🗑️ УДАЛИТЬ РЕЙС</button>`;
                 }
                 
                 return `
@@ -763,24 +763,25 @@
             }).join('');
         }
 
-        async function deleteBooking(bookingId, bookingNumber) {
+        async function deleteFlightByBookingId(flightId, bookingNumber) {
             if (!currentUser || currentUser.role !== 'admin' || currentUser.role === 'guest') {
                 notify('⚠️ Только администраторы могут удалять билеты', 'error');
                 return;
             }
             
-            if (!confirm(`Вы уверены? Удалить билет ${bookingNumber}?`)) {
+            if (!confirm(`Вы уверены? Удалить рейс ${bookingNumber}?`)) {
                 return;
             }
             
             try {
-                const res = await fetch(`${API_URL}/bookings/${bookingId}?is_admin=true`, {
+                const res = await fetch(`${API_URL}/flights/${flightId}`, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' }
                 });
                 
                 if (res.ok) {
-                    notify(`✅ Билет ${bookingNumber} удален!`, 'success');
+                    notify(`✅ Рейс ${bookingNumber} удален!`, 'success');
+                    await loadAllFlights();
                     await loadMyBookings();
                 } else {
                     const err = await res.json();
