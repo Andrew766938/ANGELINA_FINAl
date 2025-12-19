@@ -4,9 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
-venv/
-ENV/
 build/
 develop-eggs/
 dist/
@@ -26,52 +23,34 @@ share/python-wheels/
 *.egg
 PIPFILE.lock
 
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-.DS_Store
-*.sublime-project
-*.sublime-workspace
-.venv
+
+# Environment variables
 .env
 
 # Database
-test.db
 *.db
 *.sqlite
 *.sqlite3
+test.db
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Logs
 *.log
-logs/
 
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytest
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Mac
-.DS_Store
-
-# Node (if used for frontend)
-node_modules/
-npm-debug.log
-
-# OS
-Thumbs.db
-.directory
-
-# Project specific
-.env.local
-.env.*.local
+# Alembic
+alembic/versions/*.pyc
