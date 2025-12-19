@@ -62,6 +62,7 @@ class FlightRepository:
         flight = await self.get_flight_by_id(flight_id)
         if flight:
             await self.db_session.delete(flight)
+            await self.db_session.flush()
             return True
         return False
 
@@ -108,5 +109,6 @@ class AirportRepository:
         airport = await self.get_airport_by_id(airport_id)
         if airport:
             await self.db_session.delete(airport)
+            await self.db_session.flush()
             return True
         return False
