@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def init_database_sync():
     """
     🗄️  Синхронная инициализация БД (работает для SQLite)
-    Создает таблицы и загружает тестовые данные если их нет
+    Создает таблицы и гарантирует наличие тестовых данных
     """
     try:
         print("\n🗄️  Проверка БД...")
@@ -37,23 +37,25 @@ def init_database_sync():
         
         if not tables:
             print("🔴 Таблицы не найдены. Создаю...")
-            
             # Создаем все таблицы
             Base.metadata.create_all(sync_engine)
             print("✅ Таблицы созданы")
+        else:
+            print(f"✅ БД уже инициализирована ({len(tables)} таблиц)")
+        
+        # Загружаем тестовые данные (ВсЕГДА, если них нет!)
+        print("🌱 Проверяю тестовые данные...")
+        
+        SessionLocal = sessionmaker(bind=sync_engine, expire_on_commit=False)
+        db = SessionLocal()
+        
+        try:
+            # Проверяем и очищаем если нужно
             
-            # Загружаем тестовые данные
-            print("🌱 Загружаю тестовые данные...")
-            
-            SessionLocal = sessionmaker(bind=sync_engine, expire_on_commit=False)
-            db = SessionLocal()
-            
-            try:
-                # Проверь не загружены ли уже данные
-                existing = db.execute(text("SELECT COUNT(*) FROM airports")).scalar()
-                if existing > 0:
-                    print("ℹ️  Тестовые аэропорты уже загружены")
-                    return
+            # Проверяем аэропорты
+            airports_count = db.execute(text("SELECT COUNT(*) FROM airports")).scalar()
+            if airports_count == 0:
+                print("🔴 Аэропорты отсутствуют. Создаю...")
                 
                 # Создаем аэропорты
                 airports = [
@@ -93,10 +95,15 @@ def init_database_sync():
                 db.flush()
                 db.commit()
                 print(f"✅ Загружено {len(airports)} тестовых аэропортов")
+            else:
+                print(f"✅ Аэропорты уже есть ({airports_count} шт)")
+            
+            # Проверяем рейсы
+            flights_count = db.execute(text("SELECT COUNT(*) FROM flights")).scalar()
+            if flights_count == 0:
+                print("🔴 Рейсы отсутствуют. Создаю...")
                 
-                # Создаем тестовые рейсы
-                print("✈️  Создаю тестовые рейсы...")
-                
+                # Создаем рейсы
                 flights = [
                     FlightModel(
                         flight_number='SU-001',
@@ -170,11 +177,11 @@ def init_database_sync():
                 db.flush()
                 db.commit()
                 print(f"✅ Загружено {len(flights)} тестовых рейсов")
+            else:
+                print(f"✅ Рейсы уже есть ({flights_count} шт)")
                 
-            finally:
-                db.close()
-        else:
-            print(f"✅ БД уже инициализирована ({len(tables)} таблиц)")
+        finally:
+            db.close()
         
         sync_engine.dispose()
         
